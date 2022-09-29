@@ -7,28 +7,28 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 const CardBox = (props) => {
-    console.log(props.image)
-    return (
-        <div>
-            <Card sx={{ maxWidth: 345 }}>
-            <CardMedia  >               
-                <img src = {props.image} width="350" height="250"/>
-            </CardMedia>
-            <CardContent>
-                <Typography gutterBottom variant="h5" component="div">
-                {props.profileName}
-                </Typography>
-                <Typography variant="body2" color="text.secondary">
-                {props.profileDescription}
-                </Typography>
-            </CardContent>
-            <CardActions>
-                <Button size="small">Share</Button>
-                <Button size="small">Learn More</Button>
-            </CardActions>
-            </Card>
-        </div>
-      );
-}
+  console.log(props.image);
+  return (
+    <div>
+      <Card sx={{ maxWidth: 345 }}>
+        <CardMedia>
+          <img src={props.image} width='350' height='250' />
+        </CardMedia>
+        <CardContent>
+          <Typography gutterBottom variant='h5' component='div'>
+            {props.profileName}
+          </Typography>
+          <Typography variant='body2' color='text.secondary'>
+            {props.profileDescription}
+          </Typography>
+        </CardContent>
+        <CardActions>
+          <Button size='small'>Share</Button>
+          <Button size='small'>Learn More</Button>
+        </CardActions>
+      </Card>
+    </div>
+  );
+};
 
 export default CardBox;

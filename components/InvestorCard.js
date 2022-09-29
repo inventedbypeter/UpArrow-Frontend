@@ -1,12 +1,12 @@
-import React from "react";
-import Avatar from "@mui/material/Avatar";
-import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
-import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
-import { useRouter } from "next/router";
-import { useUser } from "@auth0/nextjs-auth0";
-import styled from "styled-components";
+import React from 'react';
+import Avatar from '@mui/material/Avatar';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
+import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
+import { useRouter } from 'next/router';
+import { useUser } from '@auth0/nextjs-auth0';
+import styled from 'styled-components';
 
 const InvestorCardWrapper = styled.div`
   border: solid 0.1rem #dee0e3;
@@ -57,23 +57,23 @@ const InvestorCard = (props) => {
   const router = useRouter();
   const { user, error, isLoading } = useUser();
 
-  const totalProfitTextColor = props.totalProfits >= 0 ? "green" : "red";
+  const totalProfitTextColor = props.totalProfits >= 0 ? 'green' : 'red';
   const totalProfitArrow =
     props.totalProfits >= 0 ? (
-      <ArrowUpwardRoundedIcon color="success" />
+      <ArrowUpwardRoundedIcon color='success' />
     ) : (
-      <ArrowDownwardRoundedIcon color="error" />
+      <ArrowDownwardRoundedIcon color='error' />
     );
-  const totalAssetsTextColor = props.totalProfits >= 0 ? "green" : "red";
+  const totalAssetsTextColor = props.totalProfits >= 0 ? 'green' : 'red';
 
   const seeInvestor = () => {
     if (user) {
-      localStorage.setItem("userTokenEmail", user.email);
+      localStorage.setItem('userTokenEmail', user.email);
       var investorStrId = String(props.investorId);
-      localStorage.setItem("investorStrId", investorStrId);
-      router.push("/investor");
+      localStorage.setItem('investorStrId', investorStrId);
+      router.push('/investor');
     } else {
-      router.push("/api/auth/login");
+      router.push('/api/auth/login');
     }
   };
 
@@ -84,26 +84,26 @@ const InvestorCard = (props) => {
       totalProfitTextColor={totalProfitTextColor}
       totalAssetsTextColor={totalAssetsTextColor}
     >
-      <div className="investorImg">
+      <div className='investorImg'>
         <img
-          className="avatar"
+          className='avatar'
           alt={props.investorName}
           src={props.investorAvatar}
         />
       </div>
 
-      <div className="investorInfo">
-        <div className="investorName">{props.investorName}</div>
+      <div className='investorInfo'>
+        <div className='investorName'>{props.investorName}</div>
         <p>
           Total Investment: $
           {new Intl.NumberFormat().format(props.totalInvestment)}
         </p>
-        <p className="totalProfits">
+        <p className='totalProfits'>
           Total Profits: ${new Intl.NumberFormat().format(props.totalProfits)} (
-          {totalProfitArrow}{" "}
+          {totalProfitArrow}{' '}
           {new Intl.NumberFormat().format(props.totalProfitPercentage)}%)
         </p>
-        <p className="totalAssets">
+        <p className='totalAssets'>
           Total Assets: ${new Intl.NumberFormat().format(props.totalAssets)}
         </p>
       </div>

@@ -1,9 +1,9 @@
-import * as React from "react";
-import Grid from "@mui/material/Grid";
-import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
-import ButtonBase from "@mui/material/ButtonBase";
-import styled from "styled-components";
+import * as React from 'react';
+import Grid from '@mui/material/Grid';
+import Paper from '@mui/material/Paper';
+import Typography from '@mui/material/Typography';
+import ButtonBase from '@mui/material/ButtonBase';
+import styled from 'styled-components';
 
 const PostWrapper = styled.div`
   cursor: pointer;
@@ -45,15 +45,15 @@ const PostWrapper = styled.div`
   }
 
   /* background-color: ${({ theme }) =>
-    theme.palette.mode === "dark" ? "#1A2027" : "#fff"}; */
+    theme.palette.mode === 'dark' ? '#1A2027' : '#fff'}; */
 `;
 
-const Img = styled("img")({
-  margin: "auto",
-  display: "block",
+const Img = styled('img')({
+  margin: 'auto',
+  display: 'block',
   width: 150,
   height: 125,
-  objectFit: "cover",
+  objectFit: 'cover',
 });
 
 const PostCard = ({
@@ -66,14 +66,14 @@ const PostCard = ({
 }) => {
   return (
     <PostWrapper theme={theme}>
-      <div className="image">
-        <Img alt="complex" src={postImage} />
+      <div className='image'>
+        <Img alt='complex' src={postImage} />
       </div>
 
-      <div className="textBlock">
-        <div className="title">{postTitle}</div>
-        <div className="author">{postAuthor}</div>
-        <div className="dateAndLikes">
+      <div className='textBlock'>
+        <div className='title'>{postTitle}</div>
+        <div className='author'>{postAuthor}</div>
+        <div className='dateAndLikes'>
           {postDate} | {postLikes} Likes
         </div>
       </div>

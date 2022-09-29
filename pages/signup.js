@@ -1,7 +1,7 @@
-import styled from "styled-components";
-import { useRouter } from "next/router";
-import { useUser } from "@auth0/nextjs-auth0";
-import axios from "axios";
+import styled from 'styled-components';
+import { useRouter } from 'next/router';
+import { useUser } from '@auth0/nextjs-auth0';
+import axios from 'axios';
 
 const SignupBlock = styled.div`
   padding-top: 11rem;
@@ -49,23 +49,23 @@ export default function Signup({ data }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log("firstname :", e.target.firstname.value);
-    console.log("lastname :", e.target.lastname.value);
-    console.log("profileImageUrl :", e.target.profileImageUrl.value);
-    console.log("username :", e.target.username.value);
-    console.log("website :", e.target.website.value);
-    console.log("investmentPhilosophy :", e.target.investmentPhilosophy.value);
-    console.log("simulationMoney :", e.target.simulationMoney.value);
+    console.log('firstname :', e.target.firstname.value);
+    console.log('lastname :', e.target.lastname.value);
+    console.log('profileImageUrl :', e.target.profileImageUrl.value);
+    console.log('username :', e.target.username.value);
+    console.log('website :', e.target.website.value);
+    console.log('investmentPhilosophy :', e.target.investmentPhilosophy.value);
+    console.log('simulationMoney :', e.target.simulationMoney.value);
 
-    let email = "";
+    let email = '';
 
     if (user) {
       email = user.email;
     }
 
-    console.log("email in sign up: ", email);
+    console.log('email in sign up: ', email);
 
-    const name = e.target.firstname.value + " " + e.target.lastname.value;
+    const name = e.target.firstname.value + ' ' + e.target.lastname.value;
     const profileImageUrl = e.target.profileImageUrl.value;
     const username = e.target.username.value;
     const investmentPhilosophy = e.target.investmentPhilosophy.value;
@@ -80,7 +80,7 @@ export default function Signup({ data }) {
     const totalAssests = 0;
     const followers = [];
     const followings = [];
-    const availableCash = Number(simulationMoney.replace(/[^0-9.-]+/g, ""));
+    const availableCash = Number(simulationMoney.replace(/[^0-9.-]+/g, ''));
 
     let userJSON = {};
     userJSON.name = name;
@@ -101,12 +101,12 @@ export default function Signup({ data }) {
     userJSON.availableCash = availableCash;
 
     const userDocument = await axios.post(
-      "http://localhost:4000/api/v1/investor/register/user",
+      'http://localhost:4000/api/v1/investor/register/user',
       userJSON
     );
 
     if (userDocument) {
-      router.push("/");
+      router.push('/');
     } else {
       // if posting a user fails, reload the page and then show snack bar that tells them why
       // if I get 400 make a message that you already registered with this email and show the email they registered
@@ -117,85 +117,85 @@ export default function Signup({ data }) {
 
   return (
     <SignupBlock>
-      <form className="signup-form" onSubmit={handleSubmit}>
-        <div className="text-field">
-          <label for="firstname">First Name</label>
+      <form className='signup-form' onSubmit={handleSubmit}>
+        <div className='text-field'>
+          <label for='firstname'>First Name</label>
           <input
-            type="text"
-            id="firstname"
-            name="firstname"
-            placeholder="Your first name"
+            type='text'
+            id='firstname'
+            name='firstname'
+            placeholder='Your first name'
           ></input>
         </div>
 
-        <div className="text-field">
-          <label for="lastname">Last Name</label>
+        <div className='text-field'>
+          <label for='lastname'>Last Name</label>
           <input
-            type="text"
-            id="lastname"
-            name="lastname"
-            placeholder="Your last name"
+            type='text'
+            id='lastname'
+            name='lastname'
+            placeholder='Your last name'
           ></input>
         </div>
 
-        <div className="text-field">
-          <label for="username">Username</label>
+        <div className='text-field'>
+          <label for='username'>Username</label>
           <input
-            type="text"
-            id="username"
-            name="username"
-            placeholder="This is the name visible to other UpArrow users"
+            type='text'
+            id='username'
+            name='username'
+            placeholder='This is the name visible to other UpArrow users'
           ></input>
         </div>
 
-        <div className="text-field">
-          <label for="profileImageUrl">Profile Image URL</label>
+        <div className='text-field'>
+          <label for='profileImageUrl'>Profile Image URL</label>
           <input
-            type="text"
-            id="profileImageUrl"
-            name="profileImageUrl"
-            placeholder="This is the profile image visible to other UpArrow users"
+            type='text'
+            id='profileImageUrl'
+            name='profileImageUrl'
+            placeholder='This is the profile image visible to other UpArrow users'
           ></input>
         </div>
 
-        <div className="text-field">
-          <label for="website">Social Media</label>
+        <div className='text-field'>
+          <label for='website'>Social Media</label>
           <input
-            type="text"
-            id="website"
-            name="website"
-            placeholder="YouTube, Instagram, Twitter, LinkedIn, or your personal website for other UpArrow users to follow you"
+            type='text'
+            id='website'
+            name='website'
+            placeholder='YouTube, Instagram, Twitter, LinkedIn, or your personal website for other UpArrow users to follow you'
           ></input>
         </div>
 
-        <div className="text-field">
-          <label for="investmentPhilosophy">Investment Philosophy</label>
+        <div className='text-field'>
+          <label for='investmentPhilosophy'>Investment Philosophy</label>
           <textarea
-            rows="3"
-            type="investmentPhilosophy"
-            id="investmentPhilosophy"
-            name="investmentPhilosophy"
-            placeholder="Tell us about your investment philosophy. What made you start investing? What type of stocks are you interested?"
+            rows='3'
+            type='investmentPhilosophy'
+            id='investmentPhilosophy'
+            name='investmentPhilosophy'
+            placeholder='Tell us about your investment philosophy. What made you start investing? What type of stocks are you interested?'
           />
         </div>
 
-        <div className="text-field">
-          <label for="simulationMoney">Simulation Money</label>
-          <select id="simulationMoney" name="simulationMoney">
-            <option value="$1,000">$1,000</option>
-            <option value="$10,000">$10,000</option>
-            <option value="$100,000">$100,000</option>
-            <option value="$1,000,000">$1,000,000</option>
-            <option value="$10,000,000">$10,000,000</option>
+        <div className='text-field'>
+          <label for='simulationMoney'>Simulation Money</label>
+          <select id='simulationMoney' name='simulationMoney'>
+            <option value='$1,000'>$1,000</option>
+            <option value='$10,000'>$10,000</option>
+            <option value='$100,000'>$100,000</option>
+            <option value='$1,000,000'>$1,000,000</option>
+            <option value='$10,000,000'>$10,000,000</option>
           </select>
         </div>
 
-        <div className="text-field">
+        <div className='text-field'>
           * Simulation Money is the money you can use in UpArrow to simulate
           stock investment.
         </div>
 
-        <input className="button" type="submit" value="Submit"></input>
+        <input className='button' type='submit' value='Submit'></input>
       </form>
     </SignupBlock>
   );

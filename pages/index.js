@@ -1,12 +1,12 @@
-import Logo from "../components/Logo";
-import SearchBar from "../components/SearchBar";
-import PostCard from "../components/PostCard";
-import InvestorCard from "../components/InvestorCard";
-import React, { useEffect } from "react";
-import styled from "styled-components";
-import axios from "axios";
-import { useUser } from "@auth0/nextjs-auth0";
-import { useRouter } from "next/router";
+import Logo from '../components/Logo';
+import SearchBar from '../components/SearchBar';
+import PostCard from '../components/PostCard';
+import InvestorCard from '../components/InvestorCard';
+import React, { useEffect } from 'react';
+import styled from 'styled-components';
+import axios from 'axios';
+import { useUser } from '@auth0/nextjs-auth0';
+import { useRouter } from 'next/router';
 
 const IndexWrapper = styled.div`
   padding: 3rem;
@@ -52,14 +52,14 @@ export default function Home({
 }) {
   const { user, error, isLoading } = useUser();
   const router = useRouter();
-  console.log("investorDataList: ", investorDataList);
+  console.log('investorDataList: ', investorDataList);
 
   useEffect(() => {
     const getUser = async () => {
       if (user) {
         let email = user.email;
         // let userDocument = null;
-        console.log("this is the email", email);
+        console.log('this is the email', email);
 
         // const userDocument = await axios
         //   .get(`http://localhost:4000/api/v1/investor/fetch/user/${email}`)
@@ -76,7 +76,7 @@ export default function Home({
             return response;
           })
           .catch((error) => {
-            console.log("error", error.response);
+            console.log('error', error.response);
             if (error.response.status == 400 || error.response.status == 404) {
               console.log(error.response.data); // => the response payload
               return error.response.data;
@@ -99,14 +99,14 @@ export default function Home({
         //     }
         //   }
 
-        console.log("userDocument.data", userDocument);
+        console.log('userDocument.data', userDocument);
         localStorage.setItem(
-          "profile_image_url",
+          'profile_image_url',
           userDocument.data.profile_image_url
         );
         if (Object.keys(userDocument.data).length == 0) {
-          console.log("this user does not exist");
-          router.push("/signup");
+          console.log('this user does not exist');
+          router.push('/signup');
         }
       }
     };
@@ -117,7 +117,7 @@ export default function Home({
     return <Logo stockJSON={data} />;
   });
 
-  console.log("this is investor data list: ", investorDataList);
+  console.log('this is investor data list: ', investorDataList);
 
   const gridList = logoList.map((logo) => {
     return <div>{logo}</div>;
@@ -166,9 +166,9 @@ export default function Home({
   for (var i = 0; i < sortedStockDataList.length; i++) {
     var labelJSON = {};
     valueCount++;
-    labelJSON["value"] = valueCount;
-    labelJSON["label"] = sortedStockDataList[i].name;
-    labelJSON["stockId"] = String(sortedStockDataList[i]._id);
+    labelJSON['value'] = valueCount;
+    labelJSON['label'] = sortedStockDataList[i].name;
+    labelJSON['stockId'] = String(sortedStockDataList[i]._id);
     options.push(labelJSON);
   }
   console.log(options);
@@ -177,24 +177,24 @@ export default function Home({
     <IndexWrapper>
       <SearchBar options={options} />
 
-      <div className="text" ref={stockRef}>
+      <div className='text' ref={stockRef}>
         Analyses
       </div>
 
-      <div className="stockList">{gridList}</div>
+      <div className='stockList'>{gridList}</div>
 
-      <div className="text" ref={ideaRef}>
+      <div className='text' ref={ideaRef}>
         Ideas
       </div>
 
-      <div className="postList">{gridPostList}</div>
+      <div className='postList'>{gridPostList}</div>
 
-      <div className="text" ref={investorRef}>
-        {" "}
-        Investors{" "}
+      <div className='text' ref={investorRef}>
+        {' '}
+        Investors{' '}
       </div>
 
-      <div className="investorList">{topEightGridInvestorList}</div>
+      <div className='investorList'>{topEightGridInvestorList}</div>
       <div></div>
     </IndexWrapper>
   );
@@ -202,7 +202,7 @@ export default function Home({
 
 export async function getServerSideProps() {
   const allStockList = await fetch(
-    "http://localhost:4000/api/v1/investor/fetch/stocks"
+    'http://localhost:4000/api/v1/investor/fetch/stocks'
   );
   // getting all stocks available on UpArrow (a user at the landing page where all stocks are)
   const allStockDataList = await allStockList.json();
@@ -216,13 +216,13 @@ export async function getServerSideProps() {
   // making all stock data in alphabetical order
 
   const getTopSixPost = await fetch(
-    "http://localhost:4000/api/v1/post/fetch/top/six"
+    'http://localhost:4000/api/v1/post/fetch/top/six'
   );
   const postDataList = await getTopSixPost.json();
   // a user is getting top 6 posts (on index.js)
 
   const getInvestorList = await fetch(
-    "http://localhost:4000/api/v1/investor/fetch/userprofiles/" // this api gets all investors in upArrow
+    'http://localhost:4000/api/v1/investor/fetch/userprofiles/' // this api gets all investors in upArrow
   );
   const investorDataList = await getInvestorList.json(); // investorDataList gets user document of all users in UpArrow
 
@@ -233,13 +233,13 @@ export async function getServerSideProps() {
 
     // I am trying to understand what's happening from here to below by changing names to more straight forward names
     const getPurchaseList = await fetch(
-      "http://localhost:4000/api/v1/investor/fetch/stocks/allpurchases"
+      'http://localhost:4000/api/v1/investor/fetch/stocks/allpurchases'
     );
     const data = await getPurchaseList.json();
 
     const averageStockPriceResponse = (
       await axios.get(
-        "http://localhost:4000/api/v1/admin/fetch/averagestockprice"
+        'http://localhost:4000/api/v1/admin/fetch/averagestockprice'
       )
     ).data;
     const averageList = averageStockPriceResponse[0].averages;
@@ -274,10 +274,10 @@ export async function getServerSideProps() {
           }
         }
       }
-      console.log("this is profit", profit);
+      console.log('this is profit', profit);
       portfolioList.push(purchaseJSON);
     }
-    console.log("portfolioList", portfolioList);
+    console.log('portfolioList', portfolioList);
 
     let investorPurchaseList = portfolioList.filter(
       (purchase) => !(investorStrId != purchase.userId)
@@ -309,7 +309,7 @@ export async function getServerSideProps() {
   //   return b.totalProfitPercentage - a.totalProfitPercentage;
   // });
 
-  console.log("investor data list", investorDataList);
+  console.log('investor data list', investorDataList);
 
   return {
     props: { sortedStockDataList, postDataList, investorDataList },

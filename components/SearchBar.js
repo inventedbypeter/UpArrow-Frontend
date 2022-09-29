@@ -1,10 +1,10 @@
-import React, { Component, useState, useEffect } from "react";
-import Select from "react-select";
-import { useRouter } from "next/router";
-import { useUser } from "@auth0/nextjs-auth0";
-import SearchIcon from "@material-ui/icons/Search";
-import "./SearchBar.module.css";
-import styled from "styled-components";
+import React, { Component, useState, useEffect } from 'react';
+import Select from 'react-select';
+import { useRouter } from 'next/router';
+import { useUser } from '@auth0/nextjs-auth0';
+import SearchIcon from '@material-ui/icons/Search';
+import './SearchBar.module.css';
+import styled from 'styled-components';
 
 const SearchBarWrapper = styled.div`
   .searchSelect__control {
@@ -32,19 +32,19 @@ const SearchBar = (props) => {
     setValue({ value: e });
     var stockIdStr = e.stockId;
     if (user) {
-      localStorage.setItem("stockIdStr", stockIdStr);
-      router.push("/stock");
+      localStorage.setItem('stockIdStr', stockIdStr);
+      router.push('/stock');
     } else {
-      router.push("/api/auth/login");
+      router.push('/api/auth/login');
     }
   };
 
   return (
     <SearchBarWrapper>
       <Select
-        classNamePrefix="searchSelect"
+        classNamePrefix='searchSelect'
         options={selectedOptions}
-        placeholder="Search Stocks"
+        placeholder='Search Stocks'
         onChange={handleChange}
       />
     </SearchBarWrapper>

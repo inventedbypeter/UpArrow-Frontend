@@ -1,12 +1,12 @@
-import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
-import styled from "styled-components";
+import { useRouter } from 'next/router';
+import React, { useEffect, useState } from 'react';
+import styled from 'styled-components';
 // import ProfileIcon from "../images/profile.svg";
-import { useUser } from "@auth0/nextjs-auth0";
-import axios from "axios";
+import { useUser } from '@auth0/nextjs-auth0';
+import axios from 'axios';
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import ProfileIcon from "./ProfileIcon";
-import { useQuery } from "@tanstack/react-query";
+import ProfileIcon from './ProfileIcon';
+import { useQuery } from '@tanstack/react-query';
 
 const NavBlock = styled.div`
   display: flex;
@@ -120,43 +120,43 @@ const NavBlock = styled.div`
 const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   const router = useRouter();
   const { user, error, isLoading } = useUser();
-  const { data } = useQuery(["user", user], () =>
+  const { data } = useQuery(['user', user], () =>
     axios
       .get(`http://localhost:4000/api/v1/investor/fetch/user/${user.email}`)
       .then((res) => res.data)
   );
-  console.log("this is data", data);
+  console.log('this is data', data);
 
   const [userDocument, setUserDocument] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [userId, setUserId] = useState("placeholder");
+  const [userId, setUserId] = useState('placeholder');
 
   //const [content, setContent] = useState("Please enter your comment");
 
   const navigateProfile = () => {
     if (userId.length > 0) {
-      router.push("/investor");
+      router.push('/investor');
     }
   };
 
-  console.log("before useEffect", user);
+  console.log('before useEffect', user);
   useEffect(() => {
     const getUser = async () => {
-      console.log("before if", user);
+      console.log('before if', user);
       if (user) {
-        console.log("after if", user);
+        console.log('after if', user);
         const email = user.email;
         const userResponse = await axios.get(
           `http://localhost:4000/api/v1/investor/fetch/user/${email}`
         );
-        console.log("axios in navbar", userResponse.data);
+        console.log('axios in navbar', userResponse.data);
         if (userResponse.data.isAdmin) {
-          console.log("this user is an admin");
+          console.log('this user is an admin');
           setUserId(String(userResponse.data._id));
-          localStorage.setItem("investorStrId", String(userResponse.data._id));
+          localStorage.setItem('investorStrId', String(userResponse.data._id));
           setIsAdmin(true);
         } else {
-          localStorage.setItem("investorStrId", String(userResponse.data._id));
+          localStorage.setItem('investorStrId', String(userResponse.data._id));
         }
       }
     };
@@ -164,44 +164,44 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   }, [user]);
 
   const goToIndex = () => {
-    router.push("/");
+    router.push('/');
   };
 
   const goToStocks = () => {
-    stockRef.current?.scrollIntoView({ behavior: "smooth" });
+    stockRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const goToIdeas = () => {
-    ideaRef.current?.scrollIntoView({ behavior: "smooth" });
+    ideaRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const goToInvestors = () => {
-    investorRef.current?.scrollIntoView({ behavior: "smooth" });
+    investorRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const goToAdminPage = () => {
-    console.log("This is the userId", userId);
-    localStorage.setItem("adminUserId", userId);
-    router.push("/admin");
+    console.log('This is the userId', userId);
+    localStorage.setItem('adminUserId', userId);
+    router.push('/admin');
   };
 
   return (
     <NavBlock>
-      <div className="left-items">
-        <div className="uparrow-logo" onClick={goToIndex}>
+      <div className='left-items'>
+        <div className='uparrow-logo' onClick={goToIndex}>
           UpArrow
         </div>
 
-        <div className="buttons">
-          <div className="stocks" onClick={goToStocks}>
+        <div className='buttons'>
+          <div className='stocks' onClick={goToStocks}>
             Analyses
           </div>
 
-          <div className="ideas" onClick={goToIdeas}>
+          <div className='ideas' onClick={goToIdeas}>
             Ideas
           </div>
 
-          <div className="investors" onClick={goToInvestors}>
+          <div className='investors' onClick={goToInvestors}>
             Investors
           </div>
         </div>
@@ -209,20 +209,20 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
 
       <div>
         {isAdmin ? (
-          <button className="admin-button" onClick={() => goToAdminPage()}>
-            Switch to Admin mode{" "}
+          <button className='admin-button' onClick={() => goToAdminPage()}>
+            Switch to Admin mode{' '}
           </button>
         ) : null}
       </div>
 
-      <div className="right-items">
+      <div className='right-items'>
         {data ? (
-          <img className="user-profile-picture" src={data.profile_image_url} />
+          <img className='user-profile-picture' src={data.profile_image_url} />
         ) : (
           <ProfileIcon />
         )}
       </div>
-      <a href="/api/auth/logout">Logout</a>
+      <a href='/api/auth/logout'>Logout</a>
     </NavBlock>
   );
 };

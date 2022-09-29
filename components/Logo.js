@@ -1,7 +1,7 @@
-import React from "react";
-import { useUser } from "@auth0/nextjs-auth0";
-import { useRouter } from "next/router";
-import styled from "styled-components";
+import React from 'react';
+import { useUser } from '@auth0/nextjs-auth0';
+import { useRouter } from 'next/router';
+import styled from 'styled-components';
 
 const LogoBlock = styled.img`
   width: 20rem;
@@ -22,11 +22,11 @@ const Logo = (props) => {
   const checkAuthentication = (abc) => {
     if (user) {
       var stockIdStr = String(abc._id);
-      localStorage.setItem("stockIdStr", stockIdStr);
-      localStorage.removeItem("stockIdStrModal");
-      router.push("/stock");
+      localStorage.setItem('stockIdStr', stockIdStr);
+      localStorage.removeItem('stockIdStrModal');
+      router.push('/stock');
     } else {
-      router.push("/api/auth/login");
+      router.push('/api/auth/login');
     }
   };
 

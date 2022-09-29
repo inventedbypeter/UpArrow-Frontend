@@ -1,8 +1,8 @@
-import { WorkOutlined } from "@mui/icons-material";
-import * as React from "react";
-import styled from "styled-components";
-import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
-import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
+import { WorkOutlined } from '@mui/icons-material';
+import * as React from 'react';
+import styled from 'styled-components';
+import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
+import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 
 const PurchaseBlock = styled.div`
   border: solid 0.1rem #dee0e3;
@@ -42,39 +42,39 @@ const PurchaseBlock = styled.div`
 const PurchaseCard = (props) => {
   const profitArrow =
     props.purchase.profit >= 0 ? (
-      <ArrowUpwardRoundedIcon color="success" />
+      <ArrowUpwardRoundedIcon color='success' />
     ) : (
-      <ArrowDownwardRoundedIcon color="error" />
+      <ArrowDownwardRoundedIcon color='error' />
     );
 
-  const profitTextColor = props.purchase.profit >= 0 ? "green" : "red";
+  const profitTextColor = props.purchase.profit >= 0 ? 'green' : 'red';
 
   return (
     <PurchaseBlock>
-      <div className="picture">
+      <div className='picture'>
         <img src={props.purchase.logo}></img>
       </div>
 
-      <div className="purchaseInfo">
-        <div className="ticker">{props.purchase.ticker}</div>
+      <div className='purchaseInfo'>
+        <div className='ticker'>{props.purchase.ticker}</div>
 
-        <div className="shares">{props.purchase.quantity} Shares</div>
+        <div className='shares'>{props.purchase.quantity} Shares</div>
 
-        <div className="profits">
+        <div className='profits'>
           <p style={{ color: `${profitTextColor}` }}>
-            {profitArrow}{" "}
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
+            {profitArrow}{' '}
+            {new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'USD',
             }).format(props.purchase.profit)}
           </p>
         </div>
         <div>
           <p>
-            {"Total Invested: "}
-            {new Intl.NumberFormat("en-US", {
-              style: "currency",
-              currency: "USD",
+            {'Total Invested: '}
+            {new Intl.NumberFormat('en-US', {
+              style: 'currency',
+              currency: 'USD',
             }).format(props.purchase.totalInvested)}
           </p>
         </div>

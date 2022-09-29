@@ -1,13 +1,13 @@
-import React, { useEffect, useState, Fragment } from "react";
-import { makeStyles } from "@material-ui/core";
-import { Checkbox, FormControlLabel } from "@mui/material";
-import FavoriteBorder from "@mui/icons-material/FavoriteBorder";
-import Favorite from "@mui/icons-material/Favorite";
-import { Avatar, Grid, Paper } from "@material-ui/core";
-import { useUser } from "@auth0/nextjs-auth0";
-import "./Comment.module.css";
-import axios from "axios";
-import styled from "styled-components";
+import React, { useEffect, useState, Fragment } from 'react';
+import { makeStyles } from '@material-ui/core';
+import { Checkbox, FormControlLabel } from '@mui/material';
+import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
+import Favorite from '@mui/icons-material/Favorite';
+import { Avatar, Grid, Paper } from '@material-ui/core';
+import { useUser } from '@auth0/nextjs-auth0';
+import './Comment.module.css';
+import axios from 'axios';
+import styled from 'styled-components';
 
 const CommentBlock = styled.div`
   display: flex;
@@ -44,10 +44,10 @@ const CommentBlock = styled.div`
 `;
 
 const Comment = (props) => {
-  const [username, setUsername] = useState("");
-  const [investorProfilePicture, setInvestorProfilePicture] = useState("");
+  const [username, setUsername] = useState('');
+  const [investorProfilePicture, setInvestorProfilePicture] = useState('');
   const [likes, setLikes] = useState(0);
-  var uid = "";
+  var uid = '';
   const { user, error, isLoading } = useUser();
 
   const [checked, setChecked] = useState(false);
@@ -63,7 +63,7 @@ const Comment = (props) => {
   };
 
   useEffect(() => {
-    const email = localStorage.getItem("email");
+    const email = localStorage.getItem('email');
     const getUser = async () => {
       const likesList = props.commentJSON.likes;
 
@@ -96,8 +96,8 @@ const Comment = (props) => {
       const data = await response.json();
       setUsername(data.username);
       setInvestorProfilePicture(data.profile_image_url);
-      console.log("data.profile", data.profile_image_url);
-      console.log("data", data);
+      console.log('data.profile', data.profile_image_url);
+      console.log('data', data);
     };
     getUser();
   }, []);
@@ -131,24 +131,24 @@ const Comment = (props) => {
 
   return (
     <CommentBlock>
-      <div className="profile">
-        <div className="picture">
+      <div className='profile'>
+        <div className='picture'>
           <img src={investorProfilePicture}></img>
         </div>
 
-        <div className="userInfo">
-          <div className="name">{username}</div>
+        <div className='userInfo'>
+          <div className='name'>{username}</div>
 
-          <div className="content">{props.commentJSON.content}</div>
+          <div className='content'>{props.commentJSON.content}</div>
 
-          <div className="time">
+          <div className='time'>
             {props.commentJSON.timeStamp} | {likes} Likes
           </div>
         </div>
       </div>
 
       <div
-        className="heart"
+        className='heart'
         onClick={() => {
           handleChange();
           callLikesApi();

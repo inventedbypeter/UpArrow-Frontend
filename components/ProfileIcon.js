@@ -1,8 +1,8 @@
-import styled from "styled-components";
-import { useState } from "react";
-import Image from "next/image";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { useRouter } from "next/router";
+import styled from 'styled-components';
+import { useState } from 'react';
+import Image from 'next/image';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import { useRouter } from 'next/router';
 
 const ProfileIconWrapper = styled.div`
   position: relative;
@@ -44,10 +44,10 @@ const ProfileIcon = ({ className }) => {
 
   const profileImageUrl = true
     ? null
-    : localStorage.getItem("profile_image_url");
+    : localStorage.getItem('profile_image_url');
 
   const navigateProfile = () => {
-    router.push("/investor");
+    router.push('/investor');
   };
 
   return (
@@ -63,10 +63,10 @@ const ProfileIcon = ({ className }) => {
         )}
 
         {isOpen && (
-          <div className="menu">
+          <div className='menu'>
             <a onClick={() => navigateProfile()}>My Portfolio</a>
             <a>Share Ideas</a>
-            <a href="/api/auth/logout">Logout</a>
+            <a href='/api/auth/logout'>Logout</a>
           </div>
         )}
       </ProfileIconWrapper>

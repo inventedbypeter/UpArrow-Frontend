@@ -1,17 +1,17 @@
-import React, { useEffect, useState, Fragment } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import { CardActionArea } from "@mui/material";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Link from "next/link";
-import ArrowUpwardRoundedIcon from "@mui/icons-material/ArrowUpwardRounded";
-import ArrowDownwardRoundedIcon from "@mui/icons-material/ArrowDownwardRounded";
-import ProfileModal from "./ProfileModal";
-import Grid from "@mui/material/Grid";
-import axios from "axios";
-import styled from "styled-components";
+import React, { useEffect, useState, Fragment } from 'react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import Typography from '@mui/material/Typography';
+import { CardActionArea } from '@mui/material';
+import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Link from 'next/link';
+import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
+import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
+import ProfileModal from './ProfileModal';
+import Grid from '@mui/material/Grid';
+import axios from 'axios';
+import styled from 'styled-components';
 
 const BiocardBlock = styled.div`
   padding-left: 2rem;
@@ -55,7 +55,7 @@ const BiocardBlock = styled.div`
 `;
 
 const BioCard = (props) => {
-  const [followText, setFollowText] = useState("");
+  const [followText, setFollowText] = useState('');
   const followersObjectIdList = props.followersObjectIdList; // a prop of followers ObjectID List from investor.js
   const currentUserStrId = props.currentUserJSON?._id; // currently logged in user from investor.js
   const toggleFollow = followersObjectIdList.includes(currentUserStrId); // Returns either True or False
@@ -63,16 +63,16 @@ const BioCard = (props) => {
   useEffect(() => {
     if (toggleFollow) {
       // ㅑf toggleFollow is true, setFollowText to be "Unfollow"
-      setFollowText("Unfollow");
+      setFollowText('Unfollow');
     } else {
       // ㅑf toggleFollow is not ture, setFollowText to be "Follow"
-      setFollowText("Follow");
+      setFollowText('Follow');
     }
   }, [toggleFollow]); // useEffect happens every time toggleFollow changes
 
   const enableFollow = async () => {
     var currentUserStrId = String(props.currentUserJSON._id);
-    var investorStrId = localStorage.getItem("investorStrId");
+    var investorStrId = localStorage.getItem('investorStrId');
     await axios.put(
       `http://localhost:4000/api/v1/investor/following/${currentUserStrId}/${investorStrId}`
     ); //  api call to follow/unfollow an investor
@@ -80,47 +80,47 @@ const BioCard = (props) => {
   };
 
   const seeInvestor = () => {
-    console.log("See Investor Clicked");
+    console.log('See Investor Clicked');
   };
 
-  const totalProfitTextColor = props.totalProfits >= 0 ? "green" : "red";
+  const totalProfitTextColor = props.totalProfits >= 0 ? 'green' : 'red';
   const totalProfitArrow =
     props.totalProfits >= 0 ? (
-      <ArrowUpwardRoundedIcon color="success" />
+      <ArrowUpwardRoundedIcon color='success' />
     ) : (
-      <ArrowDownwardRoundedIcon color="error" />
+      <ArrowDownwardRoundedIcon color='error' />
     );
-  const totalAssetsTextColor = props.totalAssets >= 0 ? "green" : "red";
+  const totalAssetsTextColor = props.totalAssets >= 0 ? 'green' : 'red';
   const totalAssetsArrow =
     props.totalAssets >= 0 ? (
-      <ArrowUpwardRoundedIcon color="success" />
+      <ArrowUpwardRoundedIcon color='success' />
     ) : (
-      <ArrowDownwardRoundedIcon color="error" />
+      <ArrowDownwardRoundedIcon color='error' />
     );
   var modalList = [];
-  const purchasesText = props.purchases + " Invested";
-  const followersText = props.followers + " Followers";
-  const followingsText = props.followings + " Following";
-  var modalTitle = "";
+  const purchasesText = props.purchases + ' Invested';
+  const followersText = props.followers + ' Followers';
+  const followingsText = props.followings + ' Following';
+  var modalTitle = '';
   modalList.push(purchasesText);
   modalList.push(followersText);
   modalList.push(followingsText);
 
   const renderedModalList = modalList.map((text) => {
     var docJSONList = [];
-    if (text.indexOf("Invested") != -1) {
+    if (text.indexOf('Invested') != -1) {
       docJSONList = props.stockDocumentList;
-      modalTitle = "Invested";
+      modalTitle = 'Invested';
     }
-    if (text.indexOf("Followers") != -1) {
+    if (text.indexOf('Followers') != -1) {
       docJSONList = props.followersDocumentList;
-      modalTitle = "Followers";
+      modalTitle = 'Followers';
     }
-    if (text.indexOf("Following") != -1) {
+    if (text.indexOf('Following') != -1) {
       docJSONList = props.followingsDocumentList;
-      modalTitle = "Following";
+      modalTitle = 'Following';
     }
-    console.log("this is the doc json list", docJSONList);
+    console.log('this is the doc json list', docJSONList);
     return (
       <ProfileModal
         title={text}
@@ -133,28 +133,28 @@ const BioCard = (props) => {
 
   return (
     <BiocardBlock>
-      <div className="investor-name-follow-button">
-        <div className="investor-name">{props.investorName}</div>
+      <div className='investor-name-follow-button'>
+        <div className='investor-name'>{props.investorName}</div>
         <div>
-          <button className="follow-button">Follow</button>
+          <button className='follow-button'>Follow</button>
         </div>
       </div>
 
-      <div class="investor-social">{renderedModalList}</div>
+      <div class='investor-social'>{renderedModalList}</div>
 
-      <div class="investor- info">
+      <div class='investor- info'>
         <div>{props.investorDescription}</div>
         <a href={props.investorWebsite}>{props.investorWebsite}</a>
       </div>
 
-      <div class="investor-financials">
+      <div class='investor-financials'>
         <div>
           Total Investment: $
           {new Intl.NumberFormat().format(props.totalInvestment)}
         </div>
         <div>
           Total Profits: ${new Intl.NumberFormat().format(props.totalProfits)} (
-          {totalProfitArrow}{" "}
+          {totalProfitArrow}{' '}
           {new Intl.NumberFormat().format(
             Math.floor((props.totalProfits / props.totalInvestment) * 100)
           )}
