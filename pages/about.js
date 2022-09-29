@@ -32,9 +32,7 @@ export default function About({ data }) {
 }
 
 export async function getServerSideProps() {
-  const response = await fetch(
-    'http://localhost:4000/api/v1/investor/fetch/userprofiles/'
-  );
+  const response = await fetch('http://localhost:4000/api/v1/user');
   const data = await response.json();
 
   return {

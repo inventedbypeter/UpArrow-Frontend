@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useRef, Fragment } from "react";
-import Navbar from "../components/Navbar";
-import Box from "@mui/material/Box";
-import Avatar from "@mui/material/Avatar";
-import Typography from "@mui/material/Typography";
-import { makeStyles } from "@material-ui/core/styles";
-import { Grid, Paper } from "@material-ui/core";
-import BioCard from "../components/BioCard";
-import PurchaseCard from "../components/PurchaseCard";
-import ProfileModal from "../components/ProfileModal";
-import axios from "axios";
-import { useRouter } from "next/router";
-import { useUser } from "@auth0/nextjs-auth0";
-import PostCard from "../components/PostCard";
-import styled from "styled-components";
-import { ConstructionOutlined } from "@mui/icons-material";
+import React, { useEffect, useState, useRef, Fragment } from 'react';
+import Navbar from '../components/Navbar';
+import Box from '@mui/material/Box';
+import Avatar from '@mui/material/Avatar';
+import Typography from '@mui/material/Typography';
+import { makeStyles } from '@material-ui/core/styles';
+import { Grid, Paper } from '@material-ui/core';
+import BioCard from '../components/BioCard';
+import PurchaseCard from '../components/PurchaseCard';
+import ProfileModal from '../components/ProfileModal';
+import axios from 'axios';
+import { useRouter } from 'next/router';
+import { useUser } from '@auth0/nextjs-auth0';
+import PostCard from '../components/PostCard';
+import styled from 'styled-components';
+import { ConstructionOutlined } from '@mui/icons-material';
 
 const InvestorBlock = styled.div`
   padding-top: 11rem;
@@ -59,27 +59,27 @@ const InvestorBlock = styled.div`
 
 const useStyles = makeStyles((theme) => ({
   grid: {
-    width: "100%",
-    margin: "0rem",
+    width: '100%',
+    margin: '0rem',
   },
   avatar: {
-    marginLeft: "1.5rem",
-    marginTop: "1.5rem",
+    marginLeft: '1.5rem',
+    marginTop: '1.5rem',
   },
   bio: {
-    marginTop: "1.5rem",
+    marginTop: '1.5rem',
   },
 }));
 
 export default function Investor({ portfolioList, allUsersListResponse }) {
-  console.log("this is portfolioList meow", portfolioList);
-  console.log("this is all useslist woof!", allUsersListResponse);
+  console.log('this is portfolioList meow', portfolioList);
+  console.log('this is all useslist woof!', allUsersListResponse);
   const classes = useStyles();
   const [investor, setInvestor] = useState(null);
-  const [investorAvatar, setInvestorAvatar] = useState("placeholder");
-  const [investorName, setInvestorName] = useState("placeholder");
-  const [investorDescription, setInvestorDescription] = useState("placeholder");
-  const [investorWebsite, setInvestorWebsite] = useState("placeholder");
+  const [investorAvatar, setInvestorAvatar] = useState('placeholder');
+  const [investorName, setInvestorName] = useState('placeholder');
+  const [investorDescription, setInvestorDescription] = useState('placeholder');
+  const [investorWebsite, setInvestorWebsite] = useState('placeholder');
   const [purchases, setPurchases] = useState(0);
   const [followers, setFollowers] = useState(0);
   const [followings, setFollowings] = useState(0);
@@ -104,16 +104,16 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
   const router = useRouter();
 
   const getInvestor = async (investorStrId) => {
-    var userEmail = localStorage.getItem("userTokenEmail");
+    var userEmail = localStorage.getItem('userTokenEmail');
     if (userEmail) {
       const currentUserResponse = await fetch(
-        `http://localhost:4000/api/v1/investor/search/user/${userEmail}`
+        `http://localhost:4000/api/v1/user/${userEmail}/search`
       ).catch((err) => console.log(err));
       const currentUserJSON = await currentUserResponse.json();
       setCurrentUser(currentUserJSON);
     }
     const investorResponse = await fetch(
-      `http://localhost:4000/api/v1/investor/fetch/userprofile/${investorStrId}`
+      `http://localhost:4000/api/v1/user/${investorStrId}`
     ).catch((err) => console.log(err)); // api for a logged investor to see other investor’s profile and comments
     const investorData = await investorResponse.json(); // why do we need to make it JSON??????
     setInvestor(investorData);
@@ -139,8 +139,8 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     const stockDocumentListResponse = await axios
       .get(`http://localhost:4000/api/v1/investor/purchases/${investorStrId}`)
       .catch((err) => console.log(err));
-    console.log("This is investorStrId", investorStrId);
-    console.log("stockDocumentListResponse", stockDocumentListResponse);
+    console.log('This is investorStrId', investorStrId);
+    console.log('stockDocumentListResponse', stockDocumentListResponse);
     setStockDocumentList(stockDocumentListResponse.data);
 
     const followersDocumentListResponse = await axios
@@ -191,21 +191,21 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
   // }, [input]);
 
   useEffect(() => {
-    console.log("MEOWW changes");
-    var investorStrId = localStorage.getItem("investorStrId");
+    console.log('MEOWW changes');
+    var investorStrId = localStorage.getItem('investorStrId');
     getInvestor(investorStrId); // called the getInvestor function in useEffect
-    console.log("investorStrId", investorStrId);
-    console.log("portfolioList", portfolioList);
-    console.log("all users list", allUsersListResponse);
+    console.log('investorStrId', investorStrId);
+    console.log('portfolioList', portfolioList);
+    console.log('all users list', allUsersListResponse);
 
     let filteredUserList = allUsersListResponse.filter(
       (user) => !(investorStrId != String(user._id))
     );
-    console.log("filteredUserList", filteredUserList);
+    console.log('filteredUserList', filteredUserList);
     let filteredUserDocument = filteredUserList[0];
-    console.log("filteredUserDocument", filteredUserDocument);
+    console.log('filteredUserDocument', filteredUserDocument);
     let filteredUserPurchaseList = filteredUserDocument.purchases;
-    console.log("filteredUserPurchaseList", filteredUserPurchaseList);
+    console.log('filteredUserPurchaseList', filteredUserPurchaseList);
 
     let filteredInvestorPurchaseList = [];
 
@@ -225,7 +225,7 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     }
 
     console.log(
-      "this is filtered investor purchase list :",
+      'this is filtered investor purchase list :',
       filteredInvestorPurchaseList
     );
 
@@ -254,21 +254,21 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     // code here
     var totalUserProfits = 0;
     var totalUserInvestment = 0;
-    console.log("investorPurchaseList", investorPurchaseList);
+    console.log('investorPurchaseList', investorPurchaseList);
     for (var i = 0; i < investorPurchaseList.length; i++) {
       let totalPurchaseAmount = investorPurchaseList[i].totalInvested;
       totalUserInvestment = totalUserInvestment + totalPurchaseAmount;
       totalUserProfits = investorPurchaseList[i].profit + totalUserProfits;
       console.log(
-        "investorPurchaseList[i].profit",
+        'investorPurchaseList[i].profit',
         investorPurchaseList[i].profit
       );
-      console.log("totalUserProfits", totalUserProfits);
+      console.log('totalUserProfits', totalUserProfits);
     }
     setTotalProfits(totalUserProfits);
     setTotalInvestment(totalUserInvestment);
 
-    console.log("investor purchase list", investorPurchaseList);
+    console.log('investor purchase list', investorPurchaseList);
     setPurchaseList(investorPurchaseList);
 
     getPosts(investorStrId);
@@ -276,18 +276,18 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     const getAverage = async () => {
       try {
         const averageDocument = await axios.get(
-          "http://localhost:4000/api/v1/admin/fetch/average"
+          'http://localhost:4000/api/v1/admin/fetch/average'
         );
         const averageDocumentResponse = averageDocument.data;
         setAverageList(averageDocumentResponse);
       } catch (err) {
-        console.log("error");
+        console.log('error');
       }
     };
     getAverage();
   }, []);
 
-  console.log("purchaseList", purchaseList);
+  console.log('purchaseList', purchaseList);
   const renderedPurchaseList = purchaseList.map((purchase) => {
     return <PurchaseCard purchase={purchase} averageList={averageList} />;
   });
@@ -310,12 +310,12 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
 
   return (
     <InvestorBlock>
-      <div className="upper-section">
-        <div className="avatar">
+      <div className='upper-section'>
+        <div className='avatar'>
           <img alt={investorName} src={investorAvatar}></img>
         </div>
 
-        <div className="biocard">
+        <div className='biocard'>
           <BioCard
             investorName={investorName}
             purchases={purchases}
@@ -335,14 +335,14 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
           />
         </div>
       </div>
-      <div className="middle-section">
-        <div className="text">{investorName}'s Portfolio</div>
-        <div className="purchase-card">{renderedPurchaseList}</div>
+      <div className='middle-section'>
+        <div className='text'>{investorName}'s Portfolio</div>
+        <div className='purchase-card'>{renderedPurchaseList}</div>
       </div>
 
-      <div className="bottom-section">
-        <div className="text">{investorName}'s Ideas</div>
-        <div className="post-card">{renderedPostList}</div>
+      <div className='bottom-section'>
+        <div className='text'>{investorName}'s Ideas</div>
+        <div className='post-card'>{renderedPostList}</div>
       </div>
 
       {/* {investor && (
@@ -376,17 +376,17 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
 
 export async function getServerSideProps() {
   const getPurchaseList = await fetch(
-    "http://localhost:4000/api/v1/investor/fetch/stocks/allpurchases"
+    'http://localhost:4000/api/v1/investor/fetch/stocks/allpurchases'
   );
   const data = await getPurchaseList.json();
   // a user is getting all purchases in upArrow of all users
 
   const averageStockPriceResponse = (
     await axios.get(
-      "http://localhost:4000/api/v1/admin/fetch/averagestockprice"
+      'http://localhost:4000/api/v1/admin/fetch/averagestockprice'
     )
   ).data;
-  console.log("averageStockPriceResponse", averageStockPriceResponse);
+  console.log('averageStockPriceResponse', averageStockPriceResponse);
   const averageList = averageStockPriceResponse[0].averages;
 
   // var averagesList = [];
@@ -436,10 +436,10 @@ export async function getServerSideProps() {
         }
       }
     }
-    console.log("this is profit", profit);
+    console.log('this is profit', profit);
     portfolioList.push(purchaseJSON);
   }
-  console.log("portfolioList", portfolioList);
+  console.log('portfolioList', portfolioList);
 
   // var twelveDataRes = await axios.get(
   //   `https://api.twelvedata.com/time_series?symbol=${tickerStr}&interval=1min&apikey=4c745db6ae464c4983f6f656092e5d15`
@@ -447,12 +447,10 @@ export async function getServerSideProps() {
   //console.log("twelve data res", twelveDataRes.data);
 
   // call api to get all the users
-  const allUsersList = await axios.get(
-    "http://localhost:4000/api/v1/investor/fetch/all/users"
-  );
+  const allUsersList = await axios.get('http://localhost:4000/api/v1/user');
   const allUsersListResponse = allUsersList.data;
 
-  console.log("Wooooooooooooooooooooof: ", allUsersListResponse);
+  console.log('Wooooooooooooooooooooof: ', allUsersListResponse);
 
   return {
     props: { portfolioList, allUsersListResponse },

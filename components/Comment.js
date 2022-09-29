@@ -68,7 +68,7 @@ const Comment = (props) => {
       const likesList = props.commentJSON.likes;
 
       var userResponse = await fetch(
-        `http://localhost:4000/api/v1/investor/fetch/user/${email}`
+        `http://localhost:4000/api/v1/user/${email}`
       );
       var userData = await userResponse.json();
       var userIdString = String(userData._id);
@@ -91,7 +91,7 @@ const Comment = (props) => {
       }
 
       const response = await fetch(
-        `http://localhost:4000/api/v1/investor/fetch/userprofile/${props.commentJSON.userId}`
+        `http://localhost:4000/api/v1/user/${props.commentJSON.userId}`
       );
       const data = await response.json();
       setUsername(data.username);
@@ -106,7 +106,7 @@ const Comment = (props) => {
     const commentId = String(props.commentJSON._id);
 
     var userResponse = await fetch(
-      `http://localhost:4000/api/v1/investor/fetch/user/${user.email}`
+      `http://localhost:4000/api/v1/user/${user.email}`
     );
     var userData = await userResponse.json();
     var userIdString = String(userData._id);

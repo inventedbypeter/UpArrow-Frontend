@@ -122,7 +122,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   const { user, error, isLoading } = useUser();
   const { data } = useQuery(['user', user], () =>
     axios
-      .get(`http://localhost:4000/api/v1/investor/fetch/user/${user.email}`)
+      .get(`http://localhost:4000/api/v1/user/${user.email}`)
       .then((res) => res.data)
   );
   console.log('this is data', data);
@@ -147,7 +147,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
         console.log('after if', user);
         const email = user.email;
         const userResponse = await axios.get(
-          `http://localhost:4000/api/v1/investor/fetch/user/${email}`
+          `http://localhost:4000/api/v1/user/${email}`
         );
         console.log('axios in navbar', userResponse.data);
         if (userResponse.data.isAdmin) {

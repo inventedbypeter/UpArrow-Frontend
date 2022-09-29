@@ -62,7 +62,7 @@ export default function Home({
         console.log('this is the email', email);
 
         // const userDocument = await axios
-        //   .get(`http://localhost:4000/api/v1/investor/fetch/user/${email}`)
+        //   .get(`http://localhost:4000/api/v1/user/${email}`)
         //   .then((response) => {
         //     console.log("response: ", response);
         //   })
@@ -71,7 +71,7 @@ export default function Home({
         //   });
 
         const userDocument = await axios
-          .get(`http://localhost:4000/api/v1/investor/fetch/user/${email}`)
+          .get(`http://localhost:4000/api/v1/user/${email}`)
           .then((response) => {
             return response;
           })
@@ -84,7 +84,7 @@ export default function Home({
           });
 
         // const userDocument = await axios
-        //   .get(`http://localhost:4000/api/v1/investor/fetch/user/${email}`)
+        //   .get(`http://localhost:4000/api/v1/user/${email}`)
         //   .catch(function (error) {
         //     console.log("this is error", error.response);
         //     if (error.response) {
@@ -222,7 +222,7 @@ export async function getServerSideProps() {
   // a user is getting top 6 posts (on index.js)
 
   const getInvestorList = await fetch(
-    'http://localhost:4000/api/v1/investor/fetch/userprofiles/' // this api gets all investors in upArrow
+    'http://localhost:4000/api/v1/user' // this api gets all investors in upArrow
   );
   const investorDataList = await getInvestorList.json(); // investorDataList gets user document of all users in UpArrow
 

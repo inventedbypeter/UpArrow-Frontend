@@ -101,7 +101,7 @@ export default function Signup({ data }) {
     userJSON.availableCash = availableCash;
 
     const userDocument = await axios.post(
-      'http://localhost:4000/api/v1/investor/register/user',
+      'http://localhost:4000/api/v1/user',
       userJSON
     );
 

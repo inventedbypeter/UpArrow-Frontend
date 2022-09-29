@@ -103,7 +103,7 @@ function Sale({ stockJSON }) {
     const getUser = async () => {
       const userEmail = localStorage.getItem('email');
       const response = await fetch(
-        `http://localhost:4000/api/v1/investor/fetch/user/${userEmail}`
+        `http://localhost:4000/api/v1/user/${userEmail}`
       );
       const data = await response.json();
       setUser(data);
