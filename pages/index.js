@@ -71,7 +71,7 @@ export default function Home({
         //   });
 
         const userDocument = await axios
-          .get(`http://localhost:4000/api/v1/user/${email}`)
+          .get(`http://localhost:4000/api/v1/user/${email}/email`)
           .then((response) => {
             return response;
           })

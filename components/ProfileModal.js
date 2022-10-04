@@ -196,11 +196,9 @@ SimpleDialog.propTypes = {
   selectedValue: PropTypes.string.isRequired,
 };
 
-const ProfileModal = (props) => {
+const ProfileModal = ({ title, docJSONList, currentUserId, modalTitle }) => {
   const [open, setOpen] = React.useState(false);
-  const [selectedValue, setSelectedValue] = React.useState(
-    props.docJSONList[0]
-  );
+  const [selectedValue, setSelectedValue] = React.useState();
 
   const handleClickOpen = () => {
     setOpen(true);
@@ -210,18 +208,7 @@ const ProfileModal = (props) => {
     setOpen(false);
     setSelectedValue();
   };
-  var modalTitle = '';
 
-  if (props.title.indexOf('Invested') != -1) {
-    modalTitle = 'Invested Stocks';
-  }
-  if (props.title.indexOf('Followers') != -1) {
-    modalTitle = 'Followers';
-  }
-  if (props.title.indexOf('Following') != -1) {
-    modalTitle = 'Following';
-  }
-  console.log('props title', props.title);
   return (
     <InvestorSocialBlock>
       <button
@@ -229,7 +216,7 @@ const ProfileModal = (props) => {
         variant='outlined'
         onClick={handleClickOpen}
       >
-        {props.title}
+        {`${docJSONList.length} ${title}`}
       </button>
 
       <SimpleDialog
@@ -237,9 +224,9 @@ const ProfileModal = (props) => {
         open={open}
         onClose={handleClose}
         title={modalTitle}
-        modalDocList={props.docJSONList}
-        currentUserId={props.currentUserJSONId}
-        modalTitle={props.modalTitle}
+        modalDocList={docJSONList}
+        currentUserId={currentUserId}
+        modalTitle={title}
       />
     </InvestorSocialBlock>
   );

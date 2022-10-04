@@ -181,10 +181,12 @@ export default function Signup({ data }) {
 
         <div className='text-field'>
           <label for='simulationMoney'>Simulation Money</label>
-          <select id='simulationMoney' name='simulationMoney'>
+          <select id='simulationMoney' name='simulationMoney' disabled>
             <option value='$1,000'>$1,000</option>
             <option value='$10,000'>$10,000</option>
-            <option value='$100,000'>$100,000</option>
+            <option selected value='$100,000'>
+              $100,000
+            </option>
             <option value='$1,000,000'>$1,000,000</option>
             <option value='$10,000,000'>$10,000,000</option>
           </select>

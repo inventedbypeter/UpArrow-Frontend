@@ -76,30 +76,11 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
   console.log('this is all useslist woof!', allUsersListResponse);
   const classes = useStyles();
   const [investor, setInvestor] = useState(null);
-  const [investorAvatar, setInvestorAvatar] = useState('placeholder');
-  const [investorName, setInvestorName] = useState('placeholder');
-  const [investorDescription, setInvestorDescription] = useState('placeholder');
-  const [investorWebsite, setInvestorWebsite] = useState('placeholder');
-  const [purchases, setPurchases] = useState(0);
-  const [followers, setFollowers] = useState(0);
-  const [followings, setFollowings] = useState(0);
-  const [isFollowing, setIsFollowing] = useState(false);
-  const [totalInvestment, setTotalInvestment] = useState(0);
-  const [totalProfits, setTotalProfits] = useState(0);
-  const [totalAssets, setTotalAssets] = useState(0);
+
   const [postList, setPostList] = useState([]);
-  const [stockDocumentList, setStockDocumentList] = useState([]);
-  const [followersDocumentList, setFollowersDocumentList] = useState([]);
-  const [followingsDocumentList, setFollowingsDocumentList] = useState([]);
-  const [count, setCount] = useState(0);
-  const [currentUser, setCurrentUser] = useState(null);
-  const [followersObjectIdList, setFollowersObjectIdList] = useState([]);
-  const [purchase, setPurchase] = useState(null);
   const [purchaseList, setPurchaseList] = useState([]);
-  const [error, setError] = useState(false);
   const [averageList, setAverageList] = useState({});
-  var globalCount = 0;
-  var cachedPortfolio = [];
+  const [currentUser, setCurrentUser] = useState(null);
 
   const router = useRouter();
 
@@ -112,46 +93,24 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
       const currentUserJSON = await currentUserResponse.json();
       setCurrentUser(currentUserJSON);
     }
+    console.log('userEmail : ', userEmail);
+    console.log('investor Str id : ', investorStrId);
     const investorResponse = await fetch(
       `http://localhost:4000/api/v1/user/${investorStrId}`
-    ).catch((err) => console.log(err)); // api for a logged investor to see other investor’s profile and comments
-    const investorData = await investorResponse.json(); // why do we need to make it JSON??????
-    setInvestor(investorData);
-    const purchasesCount = investorData.purchases.length;
-    setPurchases(purchasesCount);
-    const followersCount = investorData.followers.length;
-    setFollowers(followersCount);
-    setFollowersObjectIdList(investorData.followers); // followers ObjectID List
-    const followingsCount = investorData.followings.length;
-    setFollowings(followingsCount);
-    const avatar = investorData.profile_image_url;
-    setInvestorAvatar(avatar);
-    const name = investorData.name;
-    setInvestorName(name);
-    const description = investorData.description;
-    setInvestorDescription(description);
-    const website = investorData.websiteUrl;
-    setInvestorWebsite(website);
-    //setTotalInvestment(investorData.totalInvestment);
-    //setTotalProfits(investorData.totalProfits);
-    //setTotalAssets(investorData.totalAssets);
+    ).catch((err) => console.error('user investor fetch error : ', err)); // api for a logged investor to see other investor’s profile and comments
+    setInvestor(await investorResponse.json());
 
     const stockDocumentListResponse = await axios
       .get(`http://localhost:4000/api/v1/investor/purchases/${investorStrId}`)
       .catch((err) => console.log(err));
-    console.log('This is investorStrId', investorStrId);
-    console.log('stockDocumentListResponse', stockDocumentListResponse);
-    setStockDocumentList(stockDocumentListResponse.data);
 
     const followersDocumentListResponse = await axios
       .get(`http://localhost:4000/api/v1/investor/followers/${investorStrId}`)
       .catch((err) => console.log(err));
-    setFollowersDocumentList(followersDocumentListResponse.data);
 
     const followingsDocumentListResponse = await axios
       .get(`http://localhost:4000/api/v1/investor/followings/${investorStrId}`)
       .catch((err) => console.log(err));
-    setFollowingsDocumentList(followingsDocumentListResponse.data);
     // we made 3 api calls for invested companies, followers, followings
   };
 
@@ -224,11 +183,6 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
       }
     }
 
-    console.log(
-      'this is filtered investor purchase list :',
-      filteredInvestorPurchaseList
-    );
-
     // filter allUsersListResponse to get the user document that matches
     // the investor str id whcih means you only get 1 document in the
     /// filtered list after filtering
@@ -239,37 +193,16 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     /// make a boolean flag hasPurchase and set to false
     // iterate through the user purchases which is a list of purchase object ids
 
-    // let filteredUserList = allUsersList.filter(
-    //   (user) => !(investorStrId != String(user._id))
-    // );
-
-    // console.log("filtered user list: ", filteredUserList);
-
     let investorPurchaseList = filteredInvestorPurchaseList;
 
-    // var investorPurchaseList = portfolioList.filter(
-    //   (purchase) => !(investorStrId != purchase.userId)
-    // );
-
     // code here
-    var totalUserProfits = 0;
-    var totalUserInvestment = 0;
-    console.log('investorPurchaseList', investorPurchaseList);
+    let totalUserProfits = 0;
+    let totalUserInvestment = 0;
     for (var i = 0; i < investorPurchaseList.length; i++) {
       let totalPurchaseAmount = investorPurchaseList[i].totalInvested;
       totalUserInvestment = totalUserInvestment + totalPurchaseAmount;
       totalUserProfits = investorPurchaseList[i].profit + totalUserProfits;
-      console.log(
-        'investorPurchaseList[i].profit',
-        investorPurchaseList[i].profit
-      );
-      console.log('totalUserProfits', totalUserProfits);
     }
-    setTotalProfits(totalUserProfits);
-    setTotalInvestment(totalUserInvestment);
-
-    console.log('investor purchase list', investorPurchaseList);
-    setPurchaseList(investorPurchaseList);
 
     getPosts(investorStrId);
 
@@ -281,13 +214,12 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
         const averageDocumentResponse = averageDocument.data;
         setAverageList(averageDocumentResponse);
       } catch (err) {
-        console.log('error');
+        console.log('error : ', err);
       }
     };
     getAverage();
   }, []);
 
-  console.log('purchaseList', purchaseList);
   const renderedPurchaseList = purchaseList.map((purchase) => {
     return <PurchaseCard purchase={purchase} averageList={averageList} />;
   });
@@ -308,68 +240,33 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     );
   });
 
+  if (!investor) return null;
+
+  console.log('investor : ', investor);
   return (
     <InvestorBlock>
       <div className='upper-section'>
         <div className='avatar'>
-          <img alt={investorName} src={investorAvatar}></img>
+          <img alt={investor.username} src={investor.investorAvatar}></img>
         </div>
 
         <div className='biocard'>
           <BioCard
-            investorName={investorName}
-            purchases={purchases}
-            followers={followers}
-            followings={followings}
-            investorDescription={investorDescription}
-            investorWebsite={investorWebsite}
-            totalInvestment={totalInvestment}
-            totalProfits={totalProfits}
-            totalAssets={totalInvestment + totalProfits}
-            stockDocumentList={stockDocumentList}
-            followersDocumentList={followersDocumentList}
-            followingsDocumentList={followingsDocumentList}
+            investor={investor}
             currentUserJSON={currentUser} // currently logged in user
-            followersObjectIdList={followersObjectIdList} // Made a prop of followers ObjectID List
             getInvestor={getInvestor}
           />
         </div>
       </div>
       <div className='middle-section'>
-        <div className='text'>{investorName}'s Portfolio</div>
+        <div className='text'>{investor.username}'s Portfolio</div>
         <div className='purchase-card'>{renderedPurchaseList}</div>
       </div>
 
       <div className='bottom-section'>
-        <div className='text'>{investorName}'s Ideas</div>
+        <div className='text'>{investor.username}'s Ideas</div>
         <div className='post-card'>{renderedPostList}</div>
       </div>
-
-      {/* {investor && (
-              <div>
-                <BioCard
-                  investorName={investorName}
-                  purchases={purchases}
-                  followers={followers}
-                  followings={followings}
-                  investorDescription={investorDescription}
-                  investorWebsite={investorWebsite}
-                  totalInvestment={totalInvestment}
-                  totalProfits={totalProfits}
-                  totalAssets={totalAssets}
-                  stockDocumentList={stockDocumentList}
-                  followersDocumentList={followersDocumentList}
-                  followingsDocumentList={followingsDocumentList}
-                  currentUserJSON={currentUser} // currently logged in user
-                  followersObjectIdList={followersObjectIdList} // Made a prop of followers ObjectID List
-                  getInvestor={getInvestor}
-                />
-              </div>
-            )} */}
-
-      {/* {investorName}'s Portfolio */}
-
-      {/* {investorName}'s Ideas */}
     </InvestorBlock>
   );
 }

@@ -26,6 +26,13 @@ const ProfileIconWrapper = styled.div`
     padding: 1.6rem;
     cursor: pointer;
   }
+
+  .profile-icon {
+    width: 2rem;
+    height: 2rem;
+    border: 1px solid black;
+    border-radius: 9999rem;
+  }
 `;
 
 const InvisibleCover = styled.div`
@@ -38,13 +45,13 @@ const InvisibleCover = styled.div`
   z-index: 990;
 `;
 
-const ProfileIcon = ({ className }) => {
+const ProfileIcon = ({ className, data }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  const profileImageUrl = true
-    ? null
-    : localStorage.getItem('profile_image_url');
+  console.log('data : ', data);
+  const profileImageUrl = data?.profileImageUrl;
+  const isLogin = !!data;
 
   const navigateProfile = () => {
     router.push('/investor');
@@ -53,8 +60,12 @@ const ProfileIcon = ({ className }) => {
   return (
     <>
       <ProfileIconWrapper className={className}>
-        {profileImageUrl ? (
-          <img src={profileImageUrl} onClick={() => setIsOpen(!isOpen)} />
+        {isLogin ? (
+          <img
+            className='profile-icon'
+            src={profileImageUrl}
+            onClick={() => setIsOpen(!isOpen)}
+          />
         ) : (
           <AccountCircleIcon
             sx={{ fontSize: 40 }}
@@ -64,9 +75,15 @@ const ProfileIcon = ({ className }) => {
 
         {isOpen && (
           <div className='menu'>
-            <a onClick={() => navigateProfile()}>My Portfolio</a>
-            <a>Share Ideas</a>
-            <a href='/api/auth/logout'>Logout</a>
+            {isLogin ? (
+              <>
+                <a onClick={() => navigateProfile()}>My Portfolio</a>
+                <a>Share Ideas</a>
+                <a href='/api/auth/logout'>Logout</a>
+              </>
+            ) : (
+              <a href='/api/auth/login'>Login</a>
+            )}
           </div>
         )}
       </ProfileIconWrapper>

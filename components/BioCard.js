@@ -54,10 +54,10 @@ const BiocardBlock = styled.div`
   }
 `;
 
-const BioCard = (props) => {
+const BioCard = ({ investor, currentUserJSON }) => {
   const [followText, setFollowText] = useState('');
-  const followersObjectIdList = props.followersObjectIdList; // a prop of followers ObjectID List from investor.js
-  const currentUserStrId = props.currentUserJSON?._id; // currently logged in user from investor.js
+  const followersObjectIdList = investor.followers || []; // a prop of followers ObjectID List from investor.js
+  const currentUserStrId = currentUserJSON?._id; // currently logged in user from investor.js
   const toggleFollow = followersObjectIdList.includes(currentUserStrId); // Returns either True or False
 
   useEffect(() => {
@@ -79,54 +79,27 @@ const BioCard = (props) => {
     await props.getInvestor(investorStrId); // calling getInvestor function from investor.js
   };
 
-  const seeInvestor = () => {
-    console.log('See Investor Clicked');
-  };
-
-  const totalProfitTextColor = props.totalProfits >= 0 ? 'green' : 'red';
   const totalProfitArrow =
-    props.totalProfits >= 0 ? (
+    investor.totalProfits >= 0 ? (
       <ArrowUpwardRoundedIcon color='success' />
     ) : (
       <ArrowDownwardRoundedIcon color='error' />
     );
-  const totalAssetsTextColor = props.totalAssets >= 0 ? 'green' : 'red';
-  const totalAssetsArrow =
-    props.totalAssets >= 0 ? (
-      <ArrowUpwardRoundedIcon color='success' />
-    ) : (
-      <ArrowDownwardRoundedIcon color='error' />
-    );
-  var modalList = [];
-  const purchasesText = props.purchases + ' Invested';
-  const followersText = props.followers + ' Followers';
-  const followingsText = props.followings + ' Following';
-  var modalTitle = '';
-  modalList.push(purchasesText);
-  modalList.push(followersText);
-  modalList.push(followingsText);
 
+  const modalList = ['Invested', 'Followers', 'Following'];
   const renderedModalList = modalList.map((text) => {
-    var docJSONList = [];
-    if (text.indexOf('Invested') != -1) {
-      docJSONList = props.stockDocumentList;
-      modalTitle = 'Invested';
-    }
-    if (text.indexOf('Followers') != -1) {
-      docJSONList = props.followersDocumentList;
-      modalTitle = 'Followers';
-    }
-    if (text.indexOf('Following') != -1) {
-      docJSONList = props.followingsDocumentList;
-      modalTitle = 'Following';
-    }
-    console.log('this is the doc json list', docJSONList);
+    const mapper = {
+      Invested: 'purchases',
+      Followers: 'followers',
+      Following: 'followings',
+    };
+
     return (
       <ProfileModal
         title={text}
-        docJSONList={docJSONList}
-        currentUserJSONId={props.currentUserJSON?._id}
-        modalTitle={modalTitle}
+        docJSONList={investor[mapper[text]]}
+        currentUserJSONId={currentUserJSON?._id}
+        modalTitle={text}
       />
     );
   });
@@ -134,7 +107,7 @@ const BioCard = (props) => {
   return (
     <BiocardBlock>
       <div className='investor-name-follow-button'>
-        <div className='investor-name'>{props.investorName}</div>
+        <div className='investor-name'>{investor.investorName}</div>
         <div>
           <button className='follow-button'>Follow</button>
         </div>
@@ -143,64 +116,33 @@ const BioCard = (props) => {
       <div class='investor-social'>{renderedModalList}</div>
 
       <div class='investor- info'>
-        <div>{props.investorDescription}</div>
-        <a href={props.investorWebsite}>{props.investorWebsite}</a>
+        <div>{investor.investorDescription}</div>
+        <a href={investor.investorWebsite}>{investor.investorWebsite}</a>
       </div>
 
       <div class='investor-financials'>
         <div>
           Total Investment: $
-          {new Intl.NumberFormat().format(props.totalInvestment)}
+          {new Intl.NumberFormat().format(investor.totalInvestment)}
         </div>
         <div>
-          Total Profits: ${new Intl.NumberFormat().format(props.totalProfits)} (
+          Total Profits: $
+          {new Intl.NumberFormat().format(investor.totalProfits)} (
           {totalProfitArrow}{' '}
           {new Intl.NumberFormat().format(
-            Math.floor((props.totalProfits / props.totalInvestment) * 100)
+            Math.floor((investor.totalProfits / investor.totalInvestment) * 100)
           )}
           %)
         </div>
-
-        {/* <p className="totalProfits">
-          Total Profits: ${new Intl.NumberFormat().format(props.totalProfits)} (
-          {totalProfitArrow}{" "}
-          {new Intl.NumberFormat().format(props.totalProfitPercentage)}%)
-        </p> */}
+        <div>
+          Available Cash: $
+          {new Intl.NumberFormat().format(investor.availableCash)}
+        </div>
 
         <div>
-          Total Assets: ${new Intl.NumberFormat().format(props.totalAssets)}
+          Total Assets: ${new Intl.NumberFormat().format(investor.totalAssets)}
         </div>
       </div>
-
-      {/* <Typography onClick={() => seeInvestor()} variant="h5">
-              <strong>{props.investorName}</strong> */}
-
-      {/* <Button onClick={() => enableFollow()} variant="outlined">
-                {followText}
-              </Button> */}
-
-      {/* <Grid container spacing={0.5}>
-              {renderedModalList}
-            </Grid> */}
-
-      {/* <p>{props.investorDescription}</p> */}
-
-      {/* <Link href={props.investorWebsite}>
-              <a>{props.investorWebsite}</a> */}
-
-      {/*           
-              Total Investment: $
-              {new Intl.NumberFormat().format(props.totalInvestment)} */}
-
-      {/* <p style={{ color: `${totalProfitTextColor}` }}>
-              Total Profits: {totalProfitArrow} $
-              {new Intl.NumberFormat().format(props.totalProfits)}
-            </p> */}
-
-      {/* <p style={{ color: `${totalAssetsTextColor}` }}>
-              Total Assets: {totalAssetsArrow} $
-              {new Intl.NumberFormat().format(props.totalAssets)}
-            </p> */}
     </BiocardBlock>
   );
 };

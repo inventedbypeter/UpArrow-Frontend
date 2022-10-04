@@ -144,7 +144,7 @@ export default function Stock({ stockData }) {
         localStorage.setItem('email', token.email);
         const userEmail = user.email;
         const response = await fetch(
-          `http://localhost:4000/api/v1/user/${userEmail}`
+          `http://localhost:4000/api/v1/user/${userEmail}/email`
         );
         const data = await response.json();
         console.log('data of the user: ', data);
@@ -204,7 +204,7 @@ export default function Stock({ stockData }) {
     if (contentRef.current.value && stock && user) {
       var userEmail = user.email;
       const response = await fetch(
-        `http://localhost:4000/api/v1/user/${userEmail}`
+        `http://localhost:4000/api/v1/user/${userEmail}/email`
       );
       const data = await response.json();
 
@@ -237,7 +237,7 @@ export default function Stock({ stockData }) {
     if (user && stock) {
       var userEmail = user.email;
       const response = await fetch(
-        `http://localhost:4000/api/v1/user/${userEmail}`
+        `http://localhost:4000/api/v1/user/${userEmail}/email`
       );
       const data = await response.json();
       const userId = String(data._id);
@@ -269,7 +269,7 @@ export default function Stock({ stockData }) {
     if (user && stock) {
       var userEmail = user.email;
       const response = await fetch(
-        `http://localhost:4000/api/v1/user/${userEmail}`
+        `http://localhost:4000/api/v1/user/${userEmail}/email`
       );
       const data = await response.json();
       const userId = String(data._id);

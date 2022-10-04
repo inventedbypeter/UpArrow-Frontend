@@ -122,7 +122,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   const { user, error, isLoading } = useUser();
   const { data } = useQuery(['user', user], () =>
     axios
-      .get(`http://localhost:4000/api/v1/user/${user.email}`)
+      .get(`http://localhost:4000/api/v1/user/${user.email}/email`)
       .then((res) => res.data)
   );
   console.log('this is data', data);
@@ -147,7 +147,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
         console.log('after if', user);
         const email = user.email;
         const userResponse = await axios.get(
-          `http://localhost:4000/api/v1/user/${email}`
+          `http://localhost:4000/api/v1/user/${email}/email`
         );
         console.log('axios in navbar', userResponse.data);
         if (userResponse.data.isAdmin) {
@@ -216,13 +216,8 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
       </div>
 
       <div className='right-items'>
-        {data ? (
-          <img className='user-profile-picture' src={data.profile_image_url} />
-        ) : (
-          <ProfileIcon />
-        )}
+        <ProfileIcon data={data} />
       </div>
-      <a href='/api/auth/logout'>Logout</a>
     </NavBlock>
   );
 };
