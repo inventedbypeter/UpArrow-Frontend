@@ -10,7 +10,7 @@ import styled from 'styled-components';
 
 const InvestorCardWrapper = styled.div`
   border: solid 0.1rem #dee0e3;
-  width: 40rem;
+  width: 44rem;
   box-shadow: 0rem 0rem 0.2rem #c4c7cc;
   border-radius: 0.6rem;
   padding: 1rem;
@@ -53,23 +53,30 @@ const InvestorCardWrapper = styled.div`
   }
 `;
 
-const InvestorCard = (props) => {
+const InvestorCard = ({
+  investorId,
+  investorAvatar,
+  investorName,
+  totalInvestment,
+  totalProfits,
+  totalAssets,
+}) => {
   const router = useRouter();
   const { user, error, isLoading } = useUser();
 
-  const totalProfitTextColor = props.totalProfits >= 0 ? 'green' : 'red';
+  const totalProfitTextColor = totalProfits >= 0 ? 'green' : 'red';
   const totalProfitArrow =
-    props.totalProfits >= 0 ? (
+    totalProfits >= 0 ? (
       <ArrowUpwardRoundedIcon color='success' />
     ) : (
       <ArrowDownwardRoundedIcon color='error' />
     );
-  const totalAssetsTextColor = props.totalProfits >= 0 ? 'green' : 'red';
+  const totalAssetsTextColor = totalProfits >= 0 ? 'green' : 'red';
 
   const seeInvestor = () => {
     if (user) {
       localStorage.setItem('userTokenEmail', user.email);
-      var investorStrId = String(props.investorId);
+      var investorStrId = String(investorId);
       localStorage.setItem('investorStrId', investorStrId);
       router.push('/investor');
     } else {
@@ -77,34 +84,31 @@ const InvestorCard = (props) => {
     }
   };
 
+  const totalProfitPercentage = (totalProfits / totalInvestment) * 100;
+
   return (
     <InvestorCardWrapper
       onClick={() => seeInvestor()}
-      investorAvatar={props.investorAvatar}
+      investorAvatar={investorAvatar}
       totalProfitTextColor={totalProfitTextColor}
       totalAssetsTextColor={totalAssetsTextColor}
     >
       <div className='investorImg'>
-        <img
-          className='avatar'
-          alt={props.investorName}
-          src={props.investorAvatar}
-        />
+        <img className='avatar' alt={investorName} src={investorAvatar} />
       </div>
 
       <div className='investorInfo'>
-        <div className='investorName'>{props.investorName}</div>
+        <div className='investorName'>{investorName}</div>
         <p>
-          Total Investment: $
-          {new Intl.NumberFormat().format(props.totalInvestment)}
+          Total Investment: ${new Intl.NumberFormat().format(totalInvestment)}
         </p>
         <p className='totalProfits'>
-          Total Profits: ${new Intl.NumberFormat().format(props.totalProfits)} (
+          Total Profits: ${new Intl.NumberFormat().format(totalProfits)} (
           {totalProfitArrow}{' '}
-          {new Intl.NumberFormat().format(props.totalProfitPercentage)}%)
+          {new Intl.NumberFormat().format(totalProfitPercentage)}%)
         </p>
         <p className='totalAssets'>
-          Total Assets: ${new Intl.NumberFormat().format(props.totalAssets)}
+          Total Assets: ${new Intl.NumberFormat().format(totalAssets)}
         </p>
       </div>
     </InvestorCardWrapper>

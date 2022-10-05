@@ -1,22 +1,12 @@
-import React, { useEffect, useState, useRef, Fragment } from 'react';
-import Navbar from '../components/Navbar';
-import Box from '@mui/material/Box';
-import Avatar from '@mui/material/Avatar';
-import Typography from '@mui/material/Typography';
-import { makeStyles } from '@material-ui/core/styles';
-import { Grid, Paper } from '@material-ui/core';
+import React, { useEffect, useState } from 'react';
 import BioCard from '../components/BioCard';
 import PurchaseCard from '../components/PurchaseCard';
-import ProfileModal from '../components/ProfileModal';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import { useUser } from '@auth0/nextjs-auth0';
-import PostCard from '../components/PostCard';
 import styled from 'styled-components';
-import { ConstructionOutlined } from '@mui/icons-material';
 
 const InvestorBlock = styled.div`
-  padding-top: 11rem;
+  padding-top: 2rem;
   padding-left: 2rem;
 
   .upper-section {
@@ -57,24 +47,9 @@ const InvestorBlock = styled.div`
   }
 `;
 
-const useStyles = makeStyles((theme) => ({
-  grid: {
-    width: '100%',
-    margin: '0rem',
-  },
-  avatar: {
-    marginLeft: '1.5rem',
-    marginTop: '1.5rem',
-  },
-  bio: {
-    marginTop: '1.5rem',
-  },
-}));
-
 export default function Investor({ portfolioList, allUsersListResponse }) {
   console.log('this is portfolioList meow', portfolioList);
   console.log('this is all useslist woof!', allUsersListResponse);
-  const classes = useStyles();
   const [investor, setInvestor] = useState(null);
 
   const [postList, setPostList] = useState([]);
@@ -100,175 +75,131 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     ).catch((err) => console.error('user investor fetch error : ', err)); // api for a logged investor to see other investor’s profile and comments
     setInvestor(await investorResponse.json());
 
-    const stockDocumentListResponse = await axios
-      .get(`http://localhost:4000/api/v1/investor/purchases/${investorStrId}`)
-      .catch((err) => console.log(err));
+    const getPosts = async (investorStrId) => {
+      const post = await axios.get(
+        `http://localhost:4000/api/v1/post/fetch/all/user/${investorStrId}`
+      );
+      const postResponse = post.data;
+      setPostList(postResponse);
+    };
 
-    const followersDocumentListResponse = await axios
-      .get(`http://localhost:4000/api/v1/investor/followers/${investorStrId}`)
-      .catch((err) => console.log(err));
+    const renderedPostList = postList.map((post) => {
+      return (
+        <PostCard
+          postImage={post.image_url}
+          postTitle={post.title}
+          postAuthor={post.userName}
+          postDate={post.date}
+          postLikes={post.numberLikes}
+        />
+      );
+    });
 
-    const followingsDocumentListResponse = await axios
-      .get(`http://localhost:4000/api/v1/investor/followings/${investorStrId}`)
-      .catch((err) => console.log(err));
-    // we made 3 api calls for invested companies, followers, followings
-  };
+    useEffect(() => {
+      console.log('MEOWW changes');
+      var investorStrId = localStorage.getItem('investorStrId');
+      getInvestor(investorStrId); // called the getInvestor function in useEffect
+      console.log('investorStrId', investorStrId);
+      console.log('portfolioList', portfolioList);
+      console.log('all users list', allUsersListResponse);
 
-  const getPosts = async (investorStrId) => {
-    const post = await axios.get(
-      `http://localhost:4000/api/v1/post/fetch/all/user/${investorStrId}`
-    );
-    const postResponse = post.data;
-    setPostList(postResponse);
-  };
+      let filteredUserList = allUsersListResponse.filter(
+        (user) => !(investorStrId != String(user._id))
+      );
+      console.log('filteredUserList', filteredUserList);
+      let filteredUserDocument = filteredUserList[0];
+      console.log('filteredUserDocument', filteredUserDocument);
+      let filteredUserPurchaseList = filteredUserDocument.purchases;
+      console.log('filteredUserPurchaseList', filteredUserPurchaseList);
 
-  const renderedPostList = postList.map((post) => {
-    return (
-      <PostCard
-        postImage={post.image_url}
-        postTitle={post.title}
-        postAuthor={post.userName}
-        postDate={post.date}
-        postLikes={post.numberLikes}
-      />
-    );
-  });
+      let filteredInvestorPurchaseList = [];
 
-  // useEffect(() => {
-  //   const fetchData = async () => {
-  //     await fetch(`https://api.github.com/users/${input}`)
-  //       .then((res) => res.json())
-  //       .then((res) => setData([res]))
-  //       .catch((e) => console.error(e));
-  //   };
-
-  //   const timer = setTimeout(() => {
-  //     fetchData();
-  //   }, 5000);
-
-  //   return () => clearTimeout(timer);
-  // }, [input]);
-
-  useEffect(() => {
-    console.log('MEOWW changes');
-    var investorStrId = localStorage.getItem('investorStrId');
-    getInvestor(investorStrId); // called the getInvestor function in useEffect
-    console.log('investorStrId', investorStrId);
-    console.log('portfolioList', portfolioList);
-    console.log('all users list', allUsersListResponse);
-
-    let filteredUserList = allUsersListResponse.filter(
-      (user) => !(investorStrId != String(user._id))
-    );
-    console.log('filteredUserList', filteredUserList);
-    let filteredUserDocument = filteredUserList[0];
-    console.log('filteredUserDocument', filteredUserDocument);
-    let filteredUserPurchaseList = filteredUserDocument.purchases;
-    console.log('filteredUserPurchaseList', filteredUserPurchaseList);
-
-    let filteredInvestorPurchaseList = [];
-
-    for (let i = 0; i < portfolioList.length; i++) {
-      let purchaseDoc = portfolioList[i];
-      let purchaseDocId = purchaseDoc.purchaseId;
-      let purchaseUserId = purchaseDoc.userId;
-      for (let j = 0; j < filteredUserPurchaseList.length; j++) {
-        let userPurchaseId = String(filteredUserPurchaseList[j]);
-        if (
-          purchaseUserId == investorStrId &&
-          purchaseDocId == userPurchaseId
-        ) {
-          filteredInvestorPurchaseList.push(purchaseDoc);
+      for (let i = 0; i < portfolioList.length; i++) {
+        let purchaseDoc = portfolioList[i];
+        let purchaseDocId = purchaseDoc.purchaseId;
+        let purchaseUserId = purchaseDoc.userId;
+        for (let j = 0; j < filteredUserPurchaseList.length; j++) {
+          let userPurchaseId = String(filteredUserPurchaseList[j]);
+          if (
+            purchaseUserId == investorStrId &&
+            purchaseDocId == userPurchaseId
+          ) {
+            filteredInvestorPurchaseList.push(purchaseDoc);
+          }
         }
       }
-    }
 
-    // filter allUsersListResponse to get the user document that matches
-    // the investor str id whcih means you only get 1 document in the
-    /// filtered list after filtering
+      // filter allUsersListResponse to get the user document that matches
+      // the investor str id whcih means you only get 1 document in the
+      /// filtered list after filtering
 
-    // then from that user access the usrs purchases array which is objet ids
-    // of all the purchase the user owns
+      // then from that user access the usrs purchases array which is objet ids
+      // of all the purchase the user owns
 
-    /// make a boolean flag hasPurchase and set to false
-    // iterate through the user purchases which is a list of purchase object ids
+      /// make a boolean flag hasPurchase and set to false
+      // iterate through the user purchases which is a list of purchase object ids
 
-    let investorPurchaseList = filteredInvestorPurchaseList;
+      let investorPurchaseList = filteredInvestorPurchaseList;
 
-    // code here
-    let totalUserProfits = 0;
-    let totalUserInvestment = 0;
-    for (var i = 0; i < investorPurchaseList.length; i++) {
-      let totalPurchaseAmount = investorPurchaseList[i].totalInvested;
-      totalUserInvestment = totalUserInvestment + totalPurchaseAmount;
-      totalUserProfits = investorPurchaseList[i].profit + totalUserProfits;
-    }
-
-    getPosts(investorStrId);
-
-    const getAverage = async () => {
-      try {
-        const averageDocument = await axios.get(
-          'http://localhost:4000/api/v1/admin/fetch/average'
-        );
-        const averageDocumentResponse = averageDocument.data;
-        setAverageList(averageDocumentResponse);
-      } catch (err) {
-        console.log('error : ', err);
+      // code here
+      let totalUserProfits = 0;
+      let totalUserInvestment = 0;
+      for (var i = 0; i < investorPurchaseList.length; i++) {
+        let totalPurchaseAmount = investorPurchaseList[i].totalInvested;
+        totalUserInvestment = totalUserInvestment + totalPurchaseAmount;
+        totalUserProfits = investorPurchaseList[i].profit + totalUserProfits;
       }
-    };
-    getAverage();
-  }, []);
 
-  const renderedPurchaseList = purchaseList.map((purchase) => {
-    return <PurchaseCard purchase={purchase} averageList={averageList} />;
-  });
+      getPosts(investorStrId);
 
-  const gridPurchaseList = renderedPurchaseList.map((purchase) => {
+      const getAverage = async () => {
+        try {
+          const averageDocument = await axios.get(
+            'http://localhost:4000/api/v1/admin/fetch/average'
+          );
+          const averageDocumentResponse = averageDocument.data;
+          setAverageList(averageDocumentResponse);
+        } catch (err) {
+          console.log('error : ', err);
+        }
+      };
+      getAverage();
+    }, []);
+
+    const renderedPurchaseList = purchaseList.map((purchase) => {
+      return <PurchaseCard purchase={purchase} averageList={averageList} />;
+    });
+
+    if (!investor) return null;
+
+    console.log('investor : ', investor);
     return (
-      <Grid item xs={4} sm={3} md={3}>
-        {purchase}
-      </Grid>
-    );
-  });
+      <InvestorBlock>
+        <div className='upper-section'>
+          <div className='avatar'>
+            <img alt={investor.username} src={investor.investorAvatar}></img>
+          </div>
 
-  const gridPostList = renderedPostList.map((post) => {
-    return (
-      <Grid item xs={4} sm={3} md={3}>
-        {post}
-      </Grid>
-    );
-  });
-
-  if (!investor) return null;
-
-  console.log('investor : ', investor);
-  return (
-    <InvestorBlock>
-      <div className='upper-section'>
-        <div className='avatar'>
-          <img alt={investor.username} src={investor.investorAvatar}></img>
+          <div className='biocard'>
+            <BioCard
+              investor={investor}
+              currentUserJSON={currentUser} // currently logged in user
+              getInvestor={getInvestor}
+            />
+          </div>
+        </div>
+        <div className='middle-section'>
+          <div className='text'>{investor.username}'s Portfolio</div>
+          <div className='purchase-card'>{renderedPurchaseList}</div>
         </div>
 
-        <div className='biocard'>
-          <BioCard
-            investor={investor}
-            currentUserJSON={currentUser} // currently logged in user
-            getInvestor={getInvestor}
-          />
+        <div className='bottom-section'>
+          <div className='text'>{investor.username}'s Ideas</div>
+          <div className='post-card'>{renderedPostList}</div>
         </div>
-      </div>
-      <div className='middle-section'>
-        <div className='text'>{investor.username}'s Portfolio</div>
-        <div className='purchase-card'>{renderedPurchaseList}</div>
-      </div>
-
-      <div className='bottom-section'>
-        <div className='text'>{investor.username}'s Ideas</div>
-        <div className='post-card'>{renderedPostList}</div>
-      </div>
-    </InvestorBlock>
-  );
+      </InvestorBlock>
+    );
+  };
 }
 
 export async function getServerSideProps() {

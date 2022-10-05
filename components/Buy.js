@@ -82,12 +82,6 @@ const ConfirmationWrapper = styled.div`
   }
 `;
 
-// const showModal = false ? <ModalWrapper></ModalWrapper> : null;
-
-// function showModal() {
-
-// }
-
 function Buy({ stockJSON }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
@@ -102,10 +96,10 @@ function Buy({ stockJSON }) {
   useEffect(() => {
     const getUser = async () => {
       const userEmail = localStorage.getItem('email');
-      const response = await fetch(
-        `http://localhost:4000/api/v1/user/${userEmail}`
+      const response = await axios(
+        `http://localhost:4000/api/v1/user/${userEmail}/email`
       );
-      const data = await response.json();
+      const data = response.data;
       setUser(data);
       console.log('data of the user: ', data);
     };
