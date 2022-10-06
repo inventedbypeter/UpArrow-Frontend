@@ -12,6 +12,8 @@ import Buy from '../components/Buy';
 import Sale from '../components/Sale';
 import StockCover from '../components/StockCover';
 import StockChart from '../components/StockChart';
+import Analyses from '../components/Analysis';
+import StarRating from '../components/StarRating';
 
 const CommentsBlock = styled.div`
   border: solid 0.1rem #dee0e3;
@@ -248,11 +250,72 @@ export default function Stock({ stockData }) {
           </div>
         </div>
         <StockChart stockChartUrl={stockChartUrl} />
-
+        {stock?.detailInfo?.map((detail) => {
+          if (detail.type === 'html') {
+            return (
+              <Analyses
+                key={detail.title}
+                title={detail.title}
+                type={detail.type}
+              >
+                {detail.content}
+              </Analyses>
+            );
+          }
+          if (detail.type === 'ratingList') {
+            return (
+              <Analyses
+                key={detail.title}
+                title={detail.title}
+                type={detail.type}
+              >
+                <div className='star-ratings-wrapper'>
+                  {detail.content.map((ratingItem) => {
+                    return (
+                      <StarRating
+                        key={ratingItem.title}
+                        title={ratingItem.title}
+                        rating={ratingItem.score}
+                      />
+                    );
+                  })}
+                </div>
+              </Analyses>
+            );
+          }
+          return '';
+        })}
+        {/* 
+        <Analyses title='Competitive Advantages'>
+          Once you use an iPhone, it’s <strong>difficult to switch</strong> to
+          other brand as you get use to its user experience. Furthermore, Apple
+          has a great ecosystem. iPhones, iPads, Macs, Watches, AirPods works
+          together seamlessly. Which cause iPhone users to buy other Apple
+          products.
+          <br />
+          <br />
+          Premium brand image thanks to
+          <strong>beautiful product design.</strong>
+          <strong>Apple users are loyal</strong> and they are likely to buy
+          Apple products even if the prices are increased.
+          <br />
+          <br />
+          Apple charges 30% cut from app developers.
+        </Analyses>
+        <Analyses title='Product Reviews'>
+          <div className='star-ratings-wrapper'>
+            <StarRating title='IPhone' rating={4.5} />
+            <StarRating title='IPad' rating={4.5} />
+            <StarRating title='Mac' rating={3} />
+            <StarRating title='Watch' rating={1} />
+            <StarRating title='AirPot' rating={2} />
+            <StarRating title='Apple TV' rating={2} />
+          </div>
+        </Analyses>
         <div className='button-wrapper'>
           <Buy className='buyButton' stockJSON={stock} />
           <Sale stockJSON={stock} />
-        </div>
+        </div> */}
 
         {openInvest && stock && (
           <div spacing={2} sx={{ width: '100%' }}>

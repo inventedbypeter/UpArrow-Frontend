@@ -175,6 +175,11 @@ export async function getServerSideProps() {
   const postDataList = topSixPost.data;
   // a user is getting top 6 posts (on index.js)
 
+  // 10번
+  // 10번을 동시에 할수도 있고선 6차선
+  // 10 번을 순서대로 할 수도 있음
+  // 4차선 <
+  // 1차선
   const investorList = await axios(
     'http://localhost:4000/api/v1/user' // this api gets all investors in upArrow
   );
