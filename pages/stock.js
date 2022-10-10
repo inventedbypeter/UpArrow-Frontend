@@ -14,6 +14,8 @@ import StockCover from '../components/StockCover';
 import StockChart from '../components/StockChart';
 import Analyses from '../components/Analysis';
 import StarRating from '../components/StarRating';
+import Management from '../components/Management';
+import Financial from '../components/Financial';
 
 const CommentsBlock = styled.div`
   border: solid 0.1rem #dee0e3;
@@ -31,6 +33,10 @@ const StockWrapper = styled.div`
       justify-content: center;
       gap: 5rem;
     }
+  }
+
+  .financial {
+    margin-bottom: 5rem;
   }
 `;
 
@@ -283,6 +289,28 @@ export default function Stock({ stockData }) {
               </Analyses>
             );
           }
+          if (detail.type === 'management') {
+            return (
+              <Analyses title={detail.title}>
+                <Management management={detail.content} />
+              </Analyses>
+            );
+          }
+          if (detail.type === 'financials') {
+            return (
+              <Analyses title={detail.title}>
+                {detail.content.map((financialItem) => {
+                  return (
+                    <Financial
+                      className='financial'
+                      key={financialItem.title}
+                      item={financialItem}
+                    />
+                  );
+                })}
+              </Analyses>
+            );
+          }
           return '';
         })}
         {/* 
@@ -316,7 +344,6 @@ export default function Stock({ stockData }) {
           <Buy className='buyButton' stockJSON={stock} />
           <Sale stockJSON={stock} />
         </div> */}
-
         {openInvest && stock && (
           <div spacing={2} sx={{ width: '100%' }}>
             <div

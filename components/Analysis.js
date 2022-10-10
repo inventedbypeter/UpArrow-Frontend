@@ -13,8 +13,6 @@ const AnalysesWrapper = styled.div`
   }
 `;
 
-<script>alert("불법광고");</script>;
-
 const Analyses = ({ title, children, type }) => {
   return (
     <AnalysesWrapper>
