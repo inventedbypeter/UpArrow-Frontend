@@ -16,6 +16,7 @@ import Analyses from '../components/Analysis';
 import StarRating from '../components/StarRating';
 import Management from '../components/Management';
 import Financial from '../components/Financial';
+import UserIcon from '../components/UserIcon';
 
 const CommentsBlock = styled.div`
   border: solid 0.1rem #dee0e3;
@@ -38,8 +39,12 @@ const StockWrapper = styled.div`
   .financial {
     margin-bottom: 5rem;
   }
-`;
 
+  .investor-wrapper {
+    display: flex;
+    gap: 5rem;
+  }
+`;
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
@@ -53,13 +58,32 @@ export default function Stock({ stockData }) {
   const [userId, setUserId] = useState('');
   const [stock, setStock] = useState(null);
   const [filteredStock, setFilteredStock] = useState(null);
-  const router = useRouter();
   const contentRef = useRef();
   const { user, error, isLoading } = useUser();
   const [openInvest, setOpenInvest] = useState(false);
   const [openNotInvest, setOpenNotInvest] = useState(false);
   const [analysis, setAnalysis] = useState(null);
+  const [investors, setInvestors] = useState([]);
   var token = null;
+  console.log('investors : ', investors);
+
+  const fetchInvestors = async () => {
+    const investorIdList =
+      stock.detailInfo.find((info) => info.type === 'investors').content || [];
+    console.log('investorIdList  :', investorIdList);
+    const investorList = await Promise.all(
+      investorIdList.map((id) =>
+        axios.get(`http://localhost:4000/api/v1/user/${id}`)
+      )
+    );
+    console.log('setInvestors : ', investorList);
+    setInvestors(investorList.map((item) => item.data));
+  };
+  useEffect(() => {
+    if (stock) {
+      fetchInvestors();
+    }
+  }, [stock]);
 
   useEffect(() => {
     var stockJSONIdStr = localStorage.getItem('stockIdStr');
@@ -99,6 +123,7 @@ export default function Stock({ stockData }) {
         `http://localhost:4000/api/v1/investor/fetch/stock/comments/${stockJSONIdStr}`
       );
       const data = await response.json();
+      console.log('comment data  :', data);
       setComments(data);
     };
     getStockComments();
@@ -119,20 +144,20 @@ export default function Stock({ stockData }) {
     getUserId();
   }, [commentJSON]);
 
-  var hasVideo = false;
-  var hasArgument = false;
-  var messageLabel = '';
-  var stockChartUrl = '';
-  var stockTicker = '';
-  var totalVotes = 0;
-  var starScore = 0;
-  var totalVotesMessage = '';
-  var stockName = '';
-  var stockVideoUrl = '';
-  var stockPros = [];
-  var stockCons = [];
-  var stockImageUrl = '';
-  var investedVotes = 0;
+  let stockChartUrl = '';
+  let stockTicker = '';
+  let totalVotes = 0;
+  let starScore = 0;
+  let stockName = '';
+  let stockImageUrl = '';
+  let investedVotes = 0;
+  let stockVideoUrl = '';
+  let stockPros;
+  let stockCons;
+  let hasArgument;
+  let totalVotesMessage = '';
+  let hasVideo = false;
+  let messageLabel;
   if (stock) {
     stockName = stock.name;
     stockVideoUrl = stock.video_url;
@@ -145,23 +170,13 @@ export default function Stock({ stockData }) {
     starScore = (stock.invest.length / totalVotes / 2) * 10;
     stockChartUrl = `https://api.stockdio.com/visualization/financial/charts/v1/HistoricalPrices?app-key=8C5CD6B07F444FEEA5F9D26F4361B0B7&symbol=${stockTicker}&dividends=true&splits=true&palette=Financial-Light&showLogo=No`;
     totalVotesMessage = investedVotes + ' invested';
-    if (totalVotes == 0) {
+    if (totalVotes === 0) {
       starScore = 0;
     }
-    hasVideo = stock.video_url.length > 0 ? true : false;
-    hasArgument =
-      stock.pros.length >= 5 && stock.cons.length >= 5 ? true : false;
+    hasVideo = stock.video_url.length > 0;
+    hasArgument = stock.pros.length >= 5 && stock.cons.length >= 5;
     messageLabel = `What do you think about ${stock.name} stocks?`;
   }
-
-  const newCommentsList = comments.map((comment) => {
-    return (
-      <div key={comment._id}>
-        <Comment commentJSON={comment} />
-        <br />
-      </div>
-    );
-  });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -311,8 +326,41 @@ export default function Stock({ stockData }) {
               </Analyses>
             );
           }
+          if (detail.type === 'video') {
+            return (
+              <Analyses title={detail.title}>
+                <iframe width={880} height={500} src={stock.video_url} />
+              </Analyses>
+            );
+          }
+          if (detail.type === 'investors') {
+            return (
+              <Analyses title={detail.title}>
+                <div className='investor-wrapper'>
+                  {investors.map((investor) => {
+                    return (
+                      <UserIcon
+                        src={investor.profile_image_url}
+                        key={investor._id}
+                      />
+                    );
+                  })}
+                </div>
+              </Analyses>
+            );
+          }
+          if (detail.type === 'comments') {
+            return (
+              <Analyses title={detail.title}>
+                {comments.map((comment) => {
+                  return <Comment key={comment._id} commentJSON={comment} />;
+                })}
+              </Analyses>
+            );
+          }
           return '';
         })}
+
         {/* 
         <Analyses title='Competitive Advantages'>
           Once you use an iPhone, it’s <strong>difficult to switch</strong> to

@@ -27,6 +27,7 @@
     "chart.js": "^3.9.1",
     "date-and-time": "^2.4.1",
     "date-fns": "^2.28.0",
+    "javascript-time-ago": "^2.5.7",
     "jquery": "^3.6.0",
     "material-ui-icons": "^1.0.0-beta.36",
     "next": "12.1.0",

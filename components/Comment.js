@@ -8,6 +8,11 @@ import { useUser } from '@auth0/nextjs-auth0';
 import './Comment.module.css';
 import axios from 'axios';
 import styled from 'styled-components';
+import UserIcon from './UserIcon';
+import TimeAgo from 'javascript-time-ago';
+import en from 'javascript-time-ago/locale/en';
+TimeAgo.addDefaultLocale(en);
+const timeAgo = new TimeAgo('en-US');
 
 const CommentBlock = styled.div`
   display: flex;
@@ -18,22 +23,26 @@ const CommentBlock = styled.div`
     display: flex;
   }
 
-  .picture img {
-    width: 10rem;
-    height: 10rem;
-    border-radius: 5rem;
+  .picture {
     margin-right: 3rem;
   }
 
   .userInfo {
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
   }
 
-  .name {
+  .comment-name {
     font-weight: bold;
-    font-size: 1.8rem;
+    font-size: 2.8rem;
+  }
+
+  .comment-content {
+    font-size: 2.4rem;
+  }
+
+  .comment-time {
+    font-size: 2.4rem;
   }
 
   .heart {
@@ -43,7 +52,7 @@ const CommentBlock = styled.div`
   }
 `;
 
-const Comment = (props) => {
+const Comment = ({ commentJSON }) => {
   const [username, setUsername] = useState('');
   const [investorProfilePicture, setInvestorProfilePicture] = useState('');
   const [likes, setLikes] = useState(0);
@@ -55,20 +64,20 @@ const Comment = (props) => {
   const handleChange = (event) => {
     if (checked == false) {
       setChecked(true);
-      setLikes(props.commentJSON.likes.length);
+      setLikes(commentJSON.likes.length);
     } else {
       setChecked(false);
-      setLikes(props.commentJSON.likes.length);
+      setLikes(commentJSON.likes.length);
     }
   };
 
   useEffect(() => {
     const email = localStorage.getItem('email');
     const getUser = async () => {
-      const likesList = props.commentJSON.likes;
+      const likesList = commentJSON.likes;
 
       var userResponse = await fetch(
-        `http://localhost:4000/api/v1/user/${email}`
+        `http://localhost:4000/api/v1/user/${email}/email`
       );
       var userData = await userResponse.json();
       var userIdString = String(userData._id);
@@ -83,15 +92,15 @@ const Comment = (props) => {
       }
 
       if (isLiked == true) {
-        setLikes(props.commentJSON.likes.length);
+        setLikes(commentJSON.likes.length);
         setChecked(true);
       } else {
-        setLikes(props.commentJSON.likes.length);
+        setLikes(commentJSON.likes.length);
         setChecked(false);
       }
 
       const response = await fetch(
-        `http://localhost:4000/api/v1/user/${props.commentJSON.userId}`
+        `http://localhost:4000/api/v1/user/${commentJSON.userId}`
       );
       const data = await response.json();
       setUsername(data.username);
@@ -103,10 +112,10 @@ const Comment = (props) => {
   }, []);
 
   const callLikesApi = async () => {
-    const commentId = String(props.commentJSON._id);
+    const commentId = String(commentJSON._id);
 
     var userResponse = await fetch(
-      `http://localhost:4000/api/v1/user/${user.email}`
+      `http://localhost:4000/api/v1/user/${user.email}/email`
     );
     var userData = await userResponse.json();
     var userIdString = String(userData._id);
@@ -133,16 +142,16 @@ const Comment = (props) => {
     <CommentBlock>
       <div className='profile'>
         <div className='picture'>
-          <img src={investorProfilePicture}></img>
+          <UserIcon src={investorProfilePicture}></UserIcon>
         </div>
 
         <div className='userInfo'>
-          <div className='name'>{username}</div>
+          <div className='comment-name'>{username}</div>
 
-          <div className='content'>{props.commentJSON.content}</div>
+          <div className='comment-content'>{commentJSON.content}</div>
 
-          <div className='time'>
-            {props.commentJSON.timeStamp} | {likes} Likes
+          <div className='comment-time'>
+            {timeAgo.format(new Date(commentJSON.timeStamp))} | {likes} Likes
           </div>
         </div>
       </div>
@@ -161,32 +170,3 @@ const Comment = (props) => {
 };
 
 export default Comment;
-
-{
-  /* <Paper>
-        <div item>
-          <img src={investorProfilePicture} />
-        </div>
-        <div container>
-          <h4 style={{ margin: 0, textAlign: "left" }}>{username}</h4>
-          <p style={{ textAlign: "left" }}>{props.commentJSON.content} </p>
-          <p style={{ textAlign: "left", color: "gray" }}>
-            {props.commentJSON.timeStamp}{" "}
-            <Fragment>&nbsp;&nbsp;&nbsp;&nbsp;</Fragment> {likes} Likes{" "}
-            <Fragment>&nbsp;&nbsp;&nbsp;&nbsp;</Fragment>
-            <FormControlLabel
-              label=""
-              control={
-                <Checkbox
-                  checked={checked}
-                  onChange={handleChange}
-                  onClick={() => callLikesApi()}
-                  icon={<FavoriteBorder />}
-                  checkedIcon={<Favorite />}
-                />
-              }
-            />
-          </p>
-        </div>
-      </Paper> */
-}
