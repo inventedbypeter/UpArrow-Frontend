@@ -7,7 +7,6 @@ import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
 const CardBox = (props) => {
-  console.log(props.image);
   return (
     <div>
       <Card sx={{ maxWidth: 345 }}>

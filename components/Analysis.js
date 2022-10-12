@@ -3,6 +3,7 @@ import styled from 'styled-components';
 const AnalysesWrapper = styled.div`
   padding: 2rem 3.4rem;
   border: 0.1rem solid black;
+  margin-bottom: 3rem;
 
   h2 {
     font-weight: bold;

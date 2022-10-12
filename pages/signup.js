@@ -49,22 +49,8 @@ export default function Signup({ data }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('firstname :', e.target.firstname.value);
-    console.log('lastname :', e.target.lastname.value);
-    console.log('profileImageUrl :', e.target.profileImageUrl.value);
-    console.log('username :', e.target.username.value);
-    console.log('website :', e.target.website.value);
-    console.log('investmentPhilosophy :', e.target.investmentPhilosophy.value);
-    console.log('simulationMoney :', e.target.simulationMoney.value);
 
-    let email = '';
-
-    if (user) {
-      email = user.email;
-    }
-
-    console.log('email in sign up: ', email);
-
+    const email = user ? user.email : '';
     const name = e.target.firstname.value + ' ' + e.target.lastname.value;
     const profileImageUrl = e.target.profileImageUrl.value;
     const username = e.target.username.value;
@@ -82,23 +68,24 @@ export default function Signup({ data }) {
     const followings = [];
     const availableCash = Number(simulationMoney.replace(/[^0-9.-]+/g, ''));
 
-    let userJSON = {};
-    userJSON.name = name;
-    userJSON.profile_image_url = profileImageUrl;
-    userJSON.username = username;
-    userJSON.email = email;
-    userJSON.investment_philosophy = investmentPhilosophy;
-    userJSON.website_url = website;
-    userJSON.comments = comments;
-    userJSON.isAdmin = isAdmin;
-    userJSON.posts = posts;
-    userJSON.purchases = purchases;
-    userJSON.totalInvestment = totalInvestment;
-    userJSON.totalProfits = totalProfits;
-    userJSON.totalAssets = totalAssests;
-    userJSON.followers = followers;
-    userJSON.followings = followings;
-    userJSON.availableCash = availableCash;
+    const userJSON = {
+      name: name,
+      profile_image_url: profileImageUrl || user.picture,
+      username: username,
+      email: email,
+      investment_philosophy: investmentPhilosophy,
+      website_url: website,
+      comments: comments,
+      isAdmin: isAdmin,
+      posts: posts,
+      purchases: purchases,
+      totalInvestment: totalInvestment,
+      totalProfits: totalProfits,
+      totalAssets: totalAssests,
+      followers: followers,
+      followings: followings,
+      availableCash: availableCash,
+    };
 
     const userDocument = await axios.post(
       'http://localhost:4000/api/v1/user',

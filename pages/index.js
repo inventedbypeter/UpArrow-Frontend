@@ -59,9 +59,6 @@ export default function Home({
 
         const userDocument = await axios
           .get(`http://localhost:4000/api/v1/user/${email}/email`)
-          .then((response) => {
-            return response;
-          })
           .catch((error) => {
             console.log('error', error.response);
             if (error.response.status == 400 || error.response.status == 404) {
@@ -75,7 +72,6 @@ export default function Home({
           userDocument.data.profile_image_url
         );
         if (Object.keys(userDocument.data).length == 0) {
-          console.log('this user does not exist');
           router.push('/signup');
         }
       }
@@ -125,7 +121,6 @@ export default function Home({
     labelJSON['stockId'] = String(sortedStockDataList[i]._id);
     options.push(labelJSON);
   }
-  console.log(options);
 
   return (
     <IndexWrapper>

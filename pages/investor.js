@@ -48,8 +48,6 @@ const InvestorBlock = styled.div`
 `;
 
 export default function Investor({ portfolioList, allUsersListResponse }) {
-  console.log('this is portfolioList meow', portfolioList);
-  console.log('this is all useslist woof!', allUsersListResponse);
   const [investor, setInvestor] = useState(null);
 
   const [postList, setPostList] = useState([]);
@@ -68,8 +66,6 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
       const currentUserJSON = await currentUserResponse.json();
       setCurrentUser(currentUserJSON);
     }
-    console.log('userEmail : ', userEmail);
-    console.log('investor Str id : ', investorStrId);
     const investorResponse = await fetch(
       `http://localhost:4000/api/v1/user/${investorStrId}`
     ).catch((err) => console.error('user investor fetch error : ', err)); // api for a logged investor to see other investor’s profile and comments
@@ -96,30 +92,22 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     });
 
     useEffect(() => {
-      console.log('MEOWW changes');
       var investorStrId = localStorage.getItem('investorStrId');
       getInvestor(investorStrId); // called the getInvestor function in useEffect
-      console.log('investorStrId', investorStrId);
-      console.log('portfolioList', portfolioList);
-      console.log('all users list', allUsersListResponse);
 
-      let filteredUserList = allUsersListResponse.filter(
+      const filteredUserList = allUsersListResponse.filter(
         (user) => !(investorStrId != String(user._id))
       );
-      console.log('filteredUserList', filteredUserList);
-      let filteredUserDocument = filteredUserList[0];
-      console.log('filteredUserDocument', filteredUserDocument);
-      let filteredUserPurchaseList = filteredUserDocument.purchases;
-      console.log('filteredUserPurchaseList', filteredUserPurchaseList);
-
-      let filteredInvestorPurchaseList = [];
+      const filteredUserDocument = filteredUserList[0];
+      const filteredUserPurchaseList = filteredUserDocument.purchases;
+      const filteredInvestorPurchaseList = [];
 
       for (let i = 0; i < portfolioList.length; i++) {
-        let purchaseDoc = portfolioList[i];
-        let purchaseDocId = purchaseDoc.purchaseId;
-        let purchaseUserId = purchaseDoc.userId;
+        const purchaseDoc = portfolioList[i];
+        const purchaseDocId = purchaseDoc.purchaseId;
+        const purchaseUserId = purchaseDoc.userId;
         for (let j = 0; j < filteredUserPurchaseList.length; j++) {
-          let userPurchaseId = String(filteredUserPurchaseList[j]);
+          const userPurchaseId = String(filteredUserPurchaseList[j]);
           if (
             purchaseUserId == investorStrId &&
             purchaseDocId == userPurchaseId
@@ -170,9 +158,8 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
       return <PurchaseCard purchase={purchase} averageList={averageList} />;
     });
 
-    if (!investor) return null;
+    if (!investor) return <>test</>;
 
-    console.log('investor : ', investor);
     return (
       <InvestorBlock>
         <div className='upper-section'>
@@ -209,13 +196,9 @@ export async function getServerSideProps() {
   const data = await getPurchaseList.json();
   // a user is getting all purchases in upArrow of all users
 
-  const averageStockPriceResponse = (
-    await axios.get(
-      'http://localhost:4000/api/v1/admin/fetch/averagestockprice'
-    )
-  ).data;
-  console.log('averageStockPriceResponse', averageStockPriceResponse);
-  const averageList = averageStockPriceResponse[0].averages;
+  const currentStockPrices = (
+    await axios.get('http://localhost:4000/api/v1/config')
+  ).data.price;
 
   // var averagesList = [];
   // if (props.averageList[0]) {
@@ -247,38 +230,21 @@ export async function getServerSideProps() {
     purchaseJSON.ticker = stockResponse.ticker;
     purchaseJSON.logo = stockResponse.profile_image_url;
     purchaseJSON.quantity = purchase.quantity;
-    purchaseJSON.totalInvested = purchase.totalInvested;
+    purchaseJSON.totalInvested = purchase.totalInvested || 0;
     purchaseJSON.purchaseId = String(purchase._id);
-    if (averageStockPriceResponse[0]) {
-      var profit = 0;
-      for (var j = 0; j < averageList.length; j++) {
-        var company = averageList[j]; //{"AAPL":180}
-        if (company[purchaseJSON.ticker]) {
-          // company["AAPL"]
-          var currPrice = company[purchaseJSON.ticker];
-          profit =
-            purchaseJSON.quantity * currPrice - purchaseJSON.totalInvested;
-          purchaseJSON.profit = profit;
-          // Start here ////////////////////////////////////////////
-          break;
-        }
-      }
+    if (currentStockPrices) {
+      let profit = 0;
+      const currentPrice = currentStockPrices[purchaseJSON.ticker];
+      profit =
+        purchaseJSON.quantity * currentPrice - purchaseJSON.totalInvested;
+      purchaseJSON.profit = profit;
     }
-    console.log('this is profit', profit);
     portfolioList.push(purchaseJSON);
   }
-  console.log('portfolioList', portfolioList);
-
-  // var twelveDataRes = await axios.get(
-  //   `https://api.twelvedata.com/time_series?symbol=${tickerStr}&interval=1min&apikey=4c745db6ae464c4983f6f656092e5d15`
-  // );
-  //console.log("twelve data res", twelveDataRes.data);
 
   // call api to get all the users
   const allUsersList = await axios.get('http://localhost:4000/api/v1/user');
   const allUsersListResponse = allUsersList.data;
-
-  console.log('Wooooooooooooooooooooof: ', allUsersListResponse);
 
   return {
     props: { portfolioList, allUsersListResponse },

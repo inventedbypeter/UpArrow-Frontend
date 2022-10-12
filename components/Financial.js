@@ -40,7 +40,6 @@ const labels = [2018, 2019, 2020, 2021, 2022];
 const FinancialsWrapper = styled.div``;
 
 const Financial = ({ item, ...restProps }) => {
-  console.log('item : ', item);
   const data = {
     labels,
     datasets: [

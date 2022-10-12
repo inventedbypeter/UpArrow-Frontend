@@ -49,7 +49,6 @@ const ProfileIcon = ({ className, data }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  console.log('data : ', data);
   const profileImageUrl = data?.profileImageUrl;
   const isLogin = !!data;
 

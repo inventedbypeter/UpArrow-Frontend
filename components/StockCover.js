@@ -4,10 +4,15 @@ const StockCoverWrapper = styled.div`
   position: relative;
   height: 43rem;
   margin-bottom: 5rem;
-  .cover-img {
+  .empty-cover-img {
     background-color: skyblue;
     height: 37rem;
     width: 100%;
+  }
+  .cover-img {
+    height: 37rem;
+    width: 100%;
+    object-fit: cover;
   }
 
   .stock-info {
@@ -27,10 +32,14 @@ const StockCoverWrapper = styled.div`
   }
 `;
 
-const StockCover = ({ stockImageUrl, stockName }) => {
+const StockCover = ({ stockImageUrl, stockCoverImageUrl, stockName }) => {
   return (
     <StockCoverWrapper>
-      <div className='cover-img'></div>
+      {stockCoverImageUrl ? (
+        <img className='cover-img' src={stockCoverImageUrl} />
+      ) : (
+        <div className='empty-cover-img'></div>
+      )}
       <div className='stock-info'>
         <img
           className='stock-img'

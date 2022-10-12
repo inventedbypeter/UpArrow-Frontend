@@ -125,7 +125,6 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
       .get(`http://localhost:4000/api/v1/user/${user.email}/email`)
       .then((res) => res.data)
   );
-  console.log('this is data', data);
 
   const [userDocument, setUserDocument] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -139,19 +138,14 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
     }
   };
 
-  console.log('before useEffect', user);
   useEffect(() => {
     const getUser = async () => {
-      console.log('before if', user);
       if (user) {
-        console.log('after if', user);
         const email = user.email;
         const userResponse = await axios.get(
           `http://localhost:4000/api/v1/user/${email}/email`
         );
-        console.log('axios in navbar', userResponse.data);
         if (userResponse.data.isAdmin) {
-          console.log('this user is an admin');
           setUserId(String(userResponse.data._id));
           localStorage.setItem('investorStrId', String(userResponse.data._id));
           setIsAdmin(true);
@@ -180,7 +174,6 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   };
 
   const goToAdminPage = () => {
-    console.log('This is the userId', userId);
     localStorage.setItem('adminUserId', userId);
     router.push('/admin');
   };

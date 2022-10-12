@@ -18,6 +18,27 @@ import Management from '../components/Management';
 import Financial from '../components/Financial';
 import UserIcon from '../components/UserIcon';
 
+const CommentInputBlock = styled.div`
+  padding: 4rem;
+  padding-bottom: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+
+  .comment-input {
+    width: 100%;
+    height: 6rem;
+    margin-bottom: 2rem;
+  }
+
+  .comment-submit-btn {
+    border: none;
+    padding: 2rem 4rem;
+    font-size: 2rem;
+    font-weight: bold;
+  }
+`;
+
 const CommentsBlock = styled.div`
   border: solid 0.1rem #dee0e3;
   box-shadow: 0rem 0.2rem #c4c7cc;
@@ -44,39 +65,42 @@ const StockWrapper = styled.div`
     display: flex;
     gap: 5rem;
   }
+
+  .buy-sale-btn-group {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    gap: 5rem;
+    margin-bottom: 10rem;
+  }
 `;
+
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
 
 export default function Stock({ stockData }) {
-  console.log('this is stockDATA: ', stockData);
-
-  const [content, setContent] = useState('Please enter your comment');
   const [comments, setComments] = useState([]);
   const [commentJSON, setCommentJSON] = useState(null);
   const [userId, setUserId] = useState('');
   const [stock, setStock] = useState(null);
   const [filteredStock, setFilteredStock] = useState(null);
-  const contentRef = useRef();
+  const commentInputRef = useRef();
   const { user, error, isLoading } = useUser();
   const [openInvest, setOpenInvest] = useState(false);
   const [openNotInvest, setOpenNotInvest] = useState(false);
   const [analysis, setAnalysis] = useState(null);
   const [investors, setInvestors] = useState([]);
   var token = null;
-  console.log('investors : ', investors);
 
   const fetchInvestors = async () => {
     const investorIdList =
       stock.detailInfo.find((info) => info.type === 'investors').content || [];
-    console.log('investorIdList  :', investorIdList);
     const investorList = await Promise.all(
       investorIdList.map((id) =>
         axios.get(`http://localhost:4000/api/v1/user/${id}`)
       )
     );
-    console.log('setInvestors : ', investorList);
     setInvestors(investorList.map((item) => item.data));
   };
   useEffect(() => {
@@ -93,11 +117,8 @@ export default function Stock({ stockData }) {
     var filteredStockList = stockData.filter(
       (stock) => !(stockJSONIdStr != String(stock._id))
     );
-    console.log('filtered stock list: ', filteredStockList);
     const filteredStock = filteredStockList[0];
     setFilteredStock(filteredStock);
-    console.log('filteredStock: ', filteredStock);
-    console.log('stock json id str', stockJSONIdStr);
 
     const getStockJSON = async () => {
       const stockResponse = await fetch(
@@ -119,12 +140,10 @@ export default function Stock({ stockData }) {
     getStockJSON();
 
     const getStockComments = async () => {
-      const response = await fetch(
-        `http://localhost:4000/api/v1/investor/fetch/stock/comments/${stockJSONIdStr}`
+      const response = await axios(
+        `http://localhost:4000/api/v1/comment/${stockJSONIdStr}/stock`
       );
-      const data = await response.json();
-      console.log('comment data  :', data);
-      setComments(data);
+      setComments(response.data);
     };
     getStockComments();
 
@@ -137,7 +156,6 @@ export default function Stock({ stockData }) {
           `http://localhost:4000/api/v1/user/${userEmail}/email`
         );
         const data = await response.json();
-        console.log('data of the user: ', data);
         setUserId(String(data._id));
       }
     };
@@ -158,12 +176,14 @@ export default function Stock({ stockData }) {
   let totalVotesMessage = '';
   let hasVideo = false;
   let messageLabel;
+  let coverImageUrl = '';
   if (stock) {
     stockName = stock.name;
     stockVideoUrl = stock.video_url;
     stockPros = stock.pros;
     stockCons = stock.cons;
     stockImageUrl = stock.profile_image_url;
+    coverImageUrl = stock.cover_image_url;
     stockTicker = stock.ticker.toUpperCase();
     totalVotes = stock.invest.length + stock.notInvest.length;
     investedVotes = stock.invest.length;
@@ -178,38 +198,32 @@ export default function Stock({ stockData }) {
     messageLabel = `What do you think about ${stock.name} stocks?`;
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setContent(String(contentRef.current.value));
-    if (contentRef.current.value && stock && user) {
-      var userEmail = user.email;
+  const submitComment = async () => {
+    if (commentInputRef.current.value && stock && user) {
       const response = await fetch(
-        `http://localhost:4000/api/v1/user/${userEmail}/email`
+        `http://localhost:4000/api/v1/user/${user.email}/email`
       );
       const data = await response.json();
 
       const now = new Date();
       const timeStamp = date.format(now, 'YYYY/MM/DD HH:mm:ss');
-      console.log('this is time stamp: ', timeStamp);
 
-      var commentJSON = {};
-      commentJSON.stockId = String(stock._id);
-      commentJSON.userId = String(data._id);
-      commentJSON.content = contentRef.current.value;
-      commentJSON.timeStamp = timeStamp;
-      //commentJSON.timeStamp = format(new Date(), "do MMMM Y");
-      commentJSON.likes = [];
+      const commentJSON = {
+        stockId: String(stock._id),
+        userId: String(data._id),
+        content: commentInputRef.current.value,
+        timeStamp: timeStamp,
+        likes: [],
+      };
 
-      await axios
-        .post(
-          'http://localhost:4000/api/v1/investor/register/comment',
-          commentJSON
-        )
-        .then((res) => {
-          setCommentJSON(commentJSON);
-        })
-        .catch((error) => {});
-      contentRef.current.value = '';
+      try {
+        await axios.post('http://localhost:4000/api/v1/comment', commentJSON);
+        setCommentJSON(commentJSON);
+      } catch (e) {
+        console.error('e : ', e);
+      } finally {
+        commentInputRef.current.value = '';
+      }
     }
   };
 
@@ -231,15 +245,10 @@ export default function Stock({ stockData }) {
       const userId = String(data._id);
       const stockId = String(stock._id);
 
-      await axios
-        .put(
-          `http://localhost:4000/api/v1/investor/update/notInvest/company/${stockId}/${userId}`,
-          {}
-        )
-        .then((res) => {
-          console.log('call notInvest api : ', res);
-        })
-        .catch((error) => {});
+      await axios.put(
+        `http://localhost:4000/api/v1/investor/update/notInvest/company/${stockId}/${userId}`,
+        {}
+      );
 
       setOpenNotInvest(true);
     }
@@ -255,7 +264,11 @@ export default function Stock({ stockData }) {
 
   return (
     <StockWrapper>
-      <StockCover stockImageUrl={stockImageUrl} stockName={stockName} />
+      <StockCover
+        stockImageUrl={stockImageUrl}
+        stockCoverImageUrl={coverImageUrl}
+        stockName={stockName}
+      />
       <div className='content'>
         <div>
           <div>
@@ -361,37 +374,18 @@ export default function Stock({ stockData }) {
           return '';
         })}
 
-        {/* 
-        <Analyses title='Competitive Advantages'>
-          Once you use an iPhone, it’s <strong>difficult to switch</strong> to
-          other brand as you get use to its user experience. Furthermore, Apple
-          has a great ecosystem. iPhones, iPads, Macs, Watches, AirPods works
-          together seamlessly. Which cause iPhone users to buy other Apple
-          products.
-          <br />
-          <br />
-          Premium brand image thanks to
-          <strong>beautiful product design.</strong>
-          <strong>Apple users are loyal</strong> and they are likely to buy
-          Apple products even if the prices are increased.
-          <br />
-          <br />
-          Apple charges 30% cut from app developers.
+        <Analyses title='Comment'>
+          <CommentInputBlock>
+            <input className='comment-input' ref={commentInputRef} />
+            <button className='comment-submit-btn' onClick={submitComment}>
+              Submit
+            </button>
+          </CommentInputBlock>
         </Analyses>
-        <Analyses title='Product Reviews'>
-          <div className='star-ratings-wrapper'>
-            <StarRating title='IPhone' rating={4.5} />
-            <StarRating title='IPad' rating={4.5} />
-            <StarRating title='Mac' rating={3} />
-            <StarRating title='Watch' rating={1} />
-            <StarRating title='AirPot' rating={2} />
-            <StarRating title='Apple TV' rating={2} />
-          </div>
-        </Analyses>
-        <div className='button-wrapper'>
-          <Buy className='buyButton' stockJSON={stock} />
-          <Sale stockJSON={stock} />
-        </div> */}
+        <div className='buy-sale-btn-group'>
+          <Buy stockJSON={stock} />
+          <Sale />
+        </div>
         {openInvest && stock && (
           <div spacing={2} sx={{ width: '100%' }}>
             <div

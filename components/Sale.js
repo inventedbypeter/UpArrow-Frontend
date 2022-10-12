@@ -107,43 +107,30 @@ function Sale({ stockJSON }) {
       );
       const data = await response.json();
       setUser(data);
-      console.log('data of the user: ', data);
     };
     getUser();
   }, [totalInvestment]);
 
-  console.log('meow stockJSON: ', stockJSON);
-  //console.log("meow userJSON: ", userJSON);
-
   const getAverageStockPrice = async () => {
-    console.log('getAverageStockPrice run');
     const response = await axios.get(
       'http://localhost:4000/api/v1/admin/fetch/averagestockprice'
     );
-    console.log('this is response in sell', response);
     const stockList = response.data[0].averages;
     //   data = averageStockPriceResponse[0].averages;
-    console.log(
-      'For sale I am getting the current price of all stocks',
-      stockList
-    );
+
     for (let i = 0; i < stockList.length; i++) {
       let stock = stockList[i]; //{AAPL: 180.5}
       let stockCurrentPrice = 0;
-      console.log('I am inside the for loop', stockJSON);
       if (stockJSON && stock[stockJSON.ticker]) {
         //180.5
         stockCurrentPrice = stock[stockJSON.ticker];
-        console.log('Stock Current Price', stockCurrentPrice);
         //setUser(userJSON);
         setStock(stockJSON);
-        console.log('look at stockJSON for Sale', stockJSON);
 
         setCurrentPrice(stockCurrentPrice);
       }
     }
   };
-  console.log('WOOOOOOOOF', stock);
 
   if (stockJSON) {
     getAverageStockPrice();
@@ -157,10 +144,7 @@ function Sale({ stockJSON }) {
     }
   };
 
-  console.log(text);
-
   const purchaseStock = async () => {
-    console.log('in sale purchaseStock function test');
     let purchaseJSON = {};
     purchaseJSON.userId = String(user._id);
     purchaseJSON.stockId = String(stock._id);
@@ -168,14 +152,12 @@ function Sale({ stockJSON }) {
     purchaseJSON.averagePrice = currentPrice;
     purchaseJSON.totalInvested = totalInvestment;
     setBuy(true);
-    console.log('this is purchaseJSON', purchaseJSON);
 
-    await axios
-      .post('http://localhost:4000/api/v1/investor/purchase', purchaseJSON)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {});
+    await axios.post(
+      'http://localhost:4000/api/v1/investor/purchase',
+      purchaseJSON
+    );
+
     localStorage.setItem('investorStrId', purchaseJSON.userId);
     setTimeout(() => {
       router.push('/investor');
@@ -192,18 +174,13 @@ function Sale({ stockJSON }) {
   let stockName = '';
   let availableCash = 0;
 
-  console.log('here is stock', stock);
-
   if (stock) {
     stockLogo = stock.profile_image_url;
     stockName = stock.name;
-    console.log('stockLogo Printed', stockLogo);
-    console.log('stockName Printed', stockName);
   }
 
   if (user) {
     availableCash = user.availableCash;
-    console.log('availableCash Printed', availableCash);
   }
 
   let num = 123456789101112349994;
@@ -218,7 +195,6 @@ function Sale({ stockJSON }) {
         }
         newNum = newNum + num[i]; //8
       }
-      console.log('newNum', newNum);
 
       return [...newNum].reverse().join('');
     }
@@ -230,14 +206,6 @@ function Sale({ stockJSON }) {
   for (let i = 0; i <= 10; i++) {
     superNum = superNum + i;
   }
-
-  console.log('superNum', superNum);
-
-  console.log('num', numberComma(num));
-
-  console.log('currentPrice', currentPrice);
-
-  console.log('stockLogo', stockLogo);
 
   return (
     <>

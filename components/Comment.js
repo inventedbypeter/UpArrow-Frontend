@@ -49,6 +49,11 @@ const CommentBlock = styled.div`
     display: flex;
     align-items: center;
     margin-right: 1rem;
+
+    svg {
+      width: 4rem;
+      height: 4rem;
+    }
   }
 `;
 
@@ -105,8 +110,6 @@ const Comment = ({ commentJSON }) => {
       const data = await response.json();
       setUsername(data.username);
       setInvestorProfilePicture(data.profile_image_url);
-      console.log('data.profile', data.profile_image_url);
-      console.log('data', data);
     };
     getUser();
   }, []);

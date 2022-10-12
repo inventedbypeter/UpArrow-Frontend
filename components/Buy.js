@@ -82,6 +82,22 @@ const ConfirmationWrapper = styled.div`
   }
 `;
 
+const numberComma = (num) => {
+  if (typeof num === 'number' && String(num).length > 3) {
+    num = [...String(num)].reverse().join('');
+    let newNum = '';
+    for (let i = 0; i < num.length; i++) {
+      if (i % 3 === 0 && i !== 0) {
+        newNum += ',';
+      }
+      newNum = newNum + num[i]; //8
+    }
+
+    return [...newNum].reverse().join('');
+  }
+  return num;
+};
+
 function Buy({ stockJSON }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
@@ -101,138 +117,63 @@ function Buy({ stockJSON }) {
       );
       const data = response.data;
       setUser(data);
-      console.log('data of the user: ', data);
     };
     getUser();
+    if (stockJSON) {
+      getAverageStockPrice();
+    }
   }, [totalInvestment]);
 
-  console.log('meow stockJSON: ', stockJSON);
-  //console.log("meow userJSON: ", userJSON);
-
   const getAverageStockPrice = async () => {
-    const response = await axios.get(
-      'http://localhost:4000/api/v1/admin/fetch/averagestockprice'
-    );
-    const stockList = response.data[0].averages;
-    //   data = averageStockPriceResponse[0].averages;
-    console.log('I am getting the current price of all stocks', stockList);
-    for (let i = 0; i < stockList.length; i++) {
-      let stock = stockList[i]; //{AAPL: 180.5}
-      let stockCurrentPrice = 0;
-      console.log('I am inside the for loop', stockJSON);
-      if (stockJSON && stock[stockJSON.ticker]) {
-        //180.5
-        stockCurrentPrice = stock[stockJSON.ticker];
-        console.log('Stock Current Price', stockCurrentPrice);
-        //setUser(userJSON);
-        setStock(stockJSON);
-        console.log('look at stockJSON', stockJSON);
-        setCurrentPrice(stockCurrentPrice);
-      }
-    }
+    const response = await axios.get('http://localhost:4000/api/v1/config');
+    const currentStockPrices = response.data.prices;
+    const currentPrice = currentStockPrices[stockJSON.ticker];
+    setStock(stockJSON);
+    setCurrentPrice(currentPrice);
   };
 
-  if (stockJSON) {
-    getAverageStockPrice();
-  }
-
-  const showModal = () => {
-    if (!open) {
-      setOpen(true);
-    } else {
-      setOpen(false);
-    }
-  };
-
-  console.log(text);
+  const showModal = () => setOpen((s) => !s);
 
   const purchaseStock = async () => {
-    let purchaseJSON = {};
-    purchaseJSON.userId = String(user._id);
-    purchaseJSON.stockId = String(stock._id);
-    purchaseJSON.quantity = parseInt(text);
-    purchaseJSON.averagePrice = currentPrice;
-    purchaseJSON.totalInvested = totalInvestment;
-    setBuy(true);
-    console.log('this is purchaseJSON', purchaseJSON);
+    const purchaseJSON = {
+      userId: String(user._id),
+      stockId: String(stock._id),
+      quantity: parseInt(text),
+      averagePrice: currentPrice,
+      totalInvested: totalInvestment,
+    };
 
-    await axios
-      .post('http://localhost:4000/api/v1/investor/purchase', purchaseJSON)
-      .then((res) => {
-        console.log(res);
-      })
-      .catch((error) => {});
+    setBuy(true);
+
+    await axios.post(
+      'http://localhost:4000/api/v1/investor/purchase',
+      purchaseJSON
+    );
+
     localStorage.setItem('investorStrId', purchaseJSON.userId);
     setTimeout(() => {
       router.push('/investor');
     }, 10000);
   };
 
-  const calculateTotalInvestment = (e) => {
+  const calculateTotalInvestment = () => {
     const enteredQuantity = parseInt(text);
     const totalInvestment = currentPrice * enteredQuantity;
     setTotalInvestment(totalInvestment);
   };
 
-  let stockLogo = '';
-  let stockName = '';
-  let availableCash = 0;
-
-  if (stock) {
-    stockLogo = stock.profile_image_url;
-    stockName = stock.name;
-    console.log('stockLogo Printed', stockLogo);
-    console.log('stockName Printed', stockName);
-  }
-
-  if (user) {
-    availableCash = user.availableCash;
-    console.log('availableCash Printed', availableCash);
-  }
-
-  let num = 123456789101112349994;
-
-  const numberComma = (num) => {
-    if (typeof num === 'number' && String(num).length > 3) {
-      num = [...String(num)].reverse().join('');
-      let newNum = '';
-      for (let i = 0; i < num.length; i++) {
-        if (i % 3 === 0 && i !== 0) {
-          newNum += ',';
-        }
-        newNum = newNum + num[i]; //8
-      }
-      console.log('newNum', newNum);
-
-      return [...newNum].reverse().join('');
-    }
-    return num;
-  };
-
-  let superNum = 0;
-
-  for (let i = 0; i <= 10; i++) {
-    superNum = superNum + i;
-  }
-
-  console.log('superNum', superNum);
-
-  console.log('num', numberComma(num));
-
-  console.log('currentPrice', currentPrice);
-
   return (
     <>
       <BuyWrapper onClick={showModal}>Buy</BuyWrapper>
 
-      {open === true ? (
+      {open ? (
         <>
           <ModalWrapper>
-            {buy === false ? (
+            {!buy ? (
               <>
-                <img className='stockLogo' src={stockLogo} />
+                <img className='stockLogo' src={stock.profile_image_url} />
                 <p>
-                  Stock Name: <div className='boldText'>{stockName}</div>
+                  Stock Name: <div className='boldText'>{stock.name}</div>
                 </p>
                 <p>
                   Current Price:{' '}
@@ -261,19 +202,21 @@ function Buy({ stockJSON }) {
                 </p>
                 <p>
                   Available Cash:{' '}
-                  <div className='boldText'>${numberComma(availableCash)}</div>
+                  <div className='boldText'>
+                    ${numberComma(user?.availableCash)}
+                  </div>
                 </p>
 
                 <button className='button' onClick={purchaseStock}>
                   Buy
                 </button>
                 <p className='stock-price-disclaimer'>
-                  * Current price is the estimated price of the {stockName}{' '}
+                  * Current price is the estimated price of the {stock.name}{' '}
                   stock
                 </p>
                 <p className='simulation-disclaimer'>
                   * UpArrow is an investment simulator, you are not buying the
-                  actual {stockName} stock
+                  actual {stock.name} stock
                 </p>
               </>
             ) : (
@@ -284,7 +227,7 @@ function Buy({ stockJSON }) {
                   <span className='boldText'>
                     {numberComma(Number(text))} shares
                   </span>{' '}
-                  of <span className='boldText'>{stockName} </span>
+                  of <span className='boldText'>{user.stockName} </span>
                   at{' '}
                   <span className='boldText'>
                     ${numberComma(Number(currentPrice))}!
@@ -293,7 +236,10 @@ function Buy({ stockJSON }) {
                 <p className='remaining-cash'>
                   Remaining Cash:{' '}
                   <span className='boldText'>
-                    ${numberComma(availableCash - Number(text) * currentPrice)}
+                    $
+                    {numberComma(
+                      user.availableCash - Number(text) * currentPrice
+                    )}
                   </span>
                 </p>
                 <p className='loading-message'>
