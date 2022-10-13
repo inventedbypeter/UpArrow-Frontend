@@ -71,6 +71,11 @@ const ModalWrapper = styled.div`
     border: 1px #34aa52;
     margin-bottom: 15px;
   }
+
+  .error-message {
+    font-size: 2.4rem;
+    color: red;
+  }
 `;
 
 const ConfirmationWrapper = styled.div`
@@ -102,10 +107,11 @@ function Buy({ stockJSON }) {
   const [open, setOpen] = useState(false);
   const [text, setText] = useState('');
   const [currentPrice, setCurrentPrice] = useState(0);
-  const [stock, setStock] = useState(null);
+  const stock = stockJSON;
   const [user, setUser] = useState(null);
   const [totalInvestment, setTotalInvestment] = useState(0);
   const [buy, setBuy] = useState(false);
+  const [errorMsg, setErrorMsg] = useState('');
 
   const router = useRouter();
 
@@ -119,16 +125,21 @@ function Buy({ stockJSON }) {
       setUser(data);
     };
     getUser();
+  }, [totalInvestment, stock]);
+
+  useEffect(() => {
     if (stockJSON) {
       getAverageStockPrice();
     }
-  }, [totalInvestment]);
+  }, [stock]);
 
   const getAverageStockPrice = async () => {
     const response = await axios.get('http://localhost:4000/api/v1/config');
     const currentStockPrices = response.data.prices;
+    console.log('currentStockPrice : ', currentStockPrices);
+    console.log('ticker : ', stockJSON.ticker);
     const currentPrice = currentStockPrices[stockJSON.ticker];
-    setStock(stockJSON);
+    console.log('currentPrice : ', currentPrice);
     setCurrentPrice(currentPrice);
   };
 
@@ -143,17 +154,20 @@ function Buy({ stockJSON }) {
       totalInvested: totalInvestment,
     };
 
-    setBuy(true);
-
-    await axios.post(
-      'http://localhost:4000/api/v1/investor/purchase',
-      purchaseJSON
-    );
-
-    localStorage.setItem('investorStrId', purchaseJSON.userId);
-    setTimeout(() => {
-      router.push('/investor');
-    }, 10000);
+    try {
+      await axios.post(
+        'http://localhost:4000/api/v1/investor/purchase',
+        purchaseJSON
+      );
+      setBuy(true);
+      localStorage.setItem('investorStrId', purchaseJSON.userId);
+      setTimeout(() => {
+        router.push('/investor');
+      }, 10000);
+    } catch (error) {
+      setErrorMsg(JSON.stringify(error.message));
+      return;
+    }
   };
 
   const calculateTotalInvestment = () => {
@@ -171,9 +185,9 @@ function Buy({ stockJSON }) {
           <ModalWrapper>
             {!buy ? (
               <>
-                <img className='stockLogo' src={stock.profile_image_url} />
+                <img className='stockLogo' src={stock?.profile_image_url} />
                 <p>
-                  Stock Name: <div className='boldText'>{stock.name}</div>
+                  Stock Name: <div className='boldText'>{stock?.name}</div>
                 </p>
                 <p>
                   Current Price:{' '}
@@ -210,13 +224,14 @@ function Buy({ stockJSON }) {
                 <button className='button' onClick={purchaseStock}>
                   Buy
                 </button>
+                <p className='error-message'>{errorMsg}</p>
                 <p className='stock-price-disclaimer'>
-                  * Current price is the estimated price of the {stock.name}{' '}
+                  * Current price is the estimated price of the {stock?.name}{' '}
                   stock
                 </p>
                 <p className='simulation-disclaimer'>
                   * UpArrow is an investment simulator, you are not buying the
-                  actual {stock.name} stock
+                  actual {stock?.name} stock
                 </p>
               </>
             ) : (

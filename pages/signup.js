@@ -68,10 +68,11 @@ export default function Signup({ data }) {
     const followings = [];
     const availableCash = Number(simulationMoney.replace(/[^0-9.-]+/g, ''));
 
+    console.log('user : ', user);
     const userJSON = {
       name: name,
       profile_image_url: profileImageUrl || user.picture,
-      username: username,
+      username: username === '' ? user.nickname : username,
       email: email,
       investment_philosophy: investmentPhilosophy,
       website_url: website,

@@ -39,26 +39,26 @@ const PurchaseBlock = styled.div`
   }
 `;
 
-const PurchaseCard = (props) => {
+const PurchaseCard = ({ purchase }) => {
   const profitArrow =
-    props.purchase.profit >= 0 ? (
+    purchase.profit >= 0 ? (
       <ArrowUpwardRoundedIcon color='success' />
     ) : (
       <ArrowDownwardRoundedIcon color='error' />
     );
 
-  const profitTextColor = props.purchase.profit >= 0 ? 'green' : 'red';
+  const profitTextColor = purchase.profit >= 0 ? 'green' : 'red';
 
   return (
     <PurchaseBlock>
       <div className='picture'>
-        <img src={props.purchase.logo}></img>
+        <img src={purchase.logo}></img>
       </div>
 
       <div className='purchaseInfo'>
-        <div className='ticker'>{props.purchase.ticker}</div>
+        <div className='ticker'>{purchase.ticker}</div>
 
-        <div className='shares'>{props.purchase.quantity} Shares</div>
+        <div className='shares'>{purchase.quantity} Shares</div>
 
         <div className='profits'>
           <p style={{ color: `${profitTextColor}` }}>
@@ -66,7 +66,7 @@ const PurchaseCard = (props) => {
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: 'USD',
-            }).format(props.purchase.profit)}
+            }).format(purchase.profit)}
           </p>
         </div>
         <div>
@@ -75,7 +75,7 @@ const PurchaseCard = (props) => {
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: 'USD',
-            }).format(props.purchase.totalInvested)}
+            }).format(purchase.totalInvested)}
           </p>
         </div>
       </div>

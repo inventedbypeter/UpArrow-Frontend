@@ -54,6 +54,15 @@ const BiocardBlock = styled.div`
   }
 `;
 
+//clean code =>
+// function 1개 => 기능 1개
+// 컴포넌트 : 함수 => UI 기능
+
+// 부품 :
+// UI <- Best
+// UI + data fetching <= 컴포넌트 기능이 너무 커짐.
+// page: data fetching => 필요한 데이터는 UI (component)
+
 const BioCard = ({ investor, currentUserJSON }) => {
   const [followText, setFollowText] = useState('');
   const followersObjectIdList = investor.followers || []; // a prop of followers ObjectID List from investor.js
@@ -61,14 +70,8 @@ const BioCard = ({ investor, currentUserJSON }) => {
   const toggleFollow = followersObjectIdList.includes(currentUserStrId); // Returns either True or False
 
   useEffect(() => {
-    if (toggleFollow) {
-      // ㅑf toggleFollow is true, setFollowText to be "Unfollow"
-      setFollowText('Unfollow');
-    } else {
-      // ㅑf toggleFollow is not ture, setFollowText to be "Follow"
-      setFollowText('Follow');
-    }
-  }, [toggleFollow]); // useEffect happens every time toggleFollow changes
+    setFollowText(toggleFollow ? 'Unfollow' : 'Follow');
+  }, [toggleFollow]);
 
   const enableFollow = async () => {
     var currentUserStrId = String(props.currentUserJSON._id);
@@ -115,7 +118,7 @@ const BioCard = ({ investor, currentUserJSON }) => {
 
       <div class='investor-social'>{renderedModalList}</div>
 
-      <div class='investor- info'>
+      <div class='investor-info'>
         <div>{investor.investorDescription}</div>
         <a href={investor.investorWebsite}>{investor.investorWebsite}</a>
       </div>
