@@ -4,6 +4,7 @@ import PurchaseCard from '../components/PurchaseCard';
 import axios from 'axios';
 import { useRouter } from 'next/router';
 import styled from 'styled-components';
+import { useConfig } from '../hooks/useConfig';
 
 const InvestorBlock = styled.div`
   padding-top: 2rem;
@@ -49,12 +50,41 @@ const InvestorBlock = styled.div`
 
 export default function Investor({ portfolioList, allUsersListResponse }) {
   const [investor, setInvestor] = useState(null);
+  const { config, loading: configLoading } = useConfig();
 
   const [postList, setPostList] = useState([]);
-  const [purchaseList, setPurchaseList] = useState([]);
+  const [purchaseWithStockInfoList, setPurchaseWithStockInfoList] = useState(
+    []
+  );
   const [currentUser, setCurrentUser] = useState(null);
+  const [currentUserTotalInvestment, setCurrentUserTotalInvestment] =
+    useState(0);
 
-  const router = useRouter();
+  const getCurrentUserPurchases = async (investorStrId) => {
+    const userPurchases = (
+      await axios(`http://localhost:4000/api/v1/purchase/${investorStrId}/user`)
+    ).data;
+
+    const currentUserPurchaseStockList = await Promise.all(
+      userPurchases.map((purchase) => {
+        return axios.get(
+          `${process.env.NEXT_PUBLIC_SERVER_URL}/stock/${purchase.stockId}`
+        );
+      })
+    );
+
+    const purchaseWithStockInfos = userPurchases.map((purchase, index) => ({
+      ...purchase,
+      stock: currentUserPurchaseStockList[index].data,
+    }));
+
+    setPurchaseWithStockInfoList(purchaseWithStockInfos);
+    const totalInvestment = userPurchases.reduce(
+      (acc, purchase) => acc + purchase.averagePrice * purchase.quantity,
+      0
+    );
+    setCurrentUserTotalInvestment(totalInvestment);
+  };
 
   const getInvestor = async (investorStrId) => {
     const userEmail = localStorage.getItem('userTokenEmail');
@@ -90,10 +120,20 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
       />
     );
   });
+
+  const profitList = purchaseWithStockInfoList.map((purchase) => {
+    const currentStockPrice = config?.prices?.[purchase.stock.ticker || ''];
+    const quantity = purchase.quantity;
+    const investedMoney = purchase.quantity * purchase.averagePrice;
+    return currentStockPrice * quantity - investedMoney;
+  });
+
+  const totalProfit = profitList.reduce((acc, profit) => profit + acc, 0);
   useEffect(() => {
     const investorStrId = localStorage.getItem('investorStrId');
     getInvestor(investorStrId); // called the getInvestor function in useEffect
     getPosts(investorStrId);
+    getCurrentUserPurchases(investorStrId);
     const filteredUserList = allUsersListResponse.filter(
       (user) => !(investorStrId !== String(user._id))
     );
@@ -127,7 +167,7 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     }
   }, []);
 
-  const renderedPurchaseList = purchaseList.map((purchase) => {
+  const renderedPurchaseList = purchaseWithStockInfoList.map((purchase) => {
     return <PurchaseCard purchase={purchase} />;
   });
 
@@ -145,6 +185,8 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
             investor={investor}
             currentUserJSON={currentUser} // currently logged in user
             getInvestor={getInvestor}
+            totalInvestment={currentUserTotalInvestment}
+            totalProfit={totalProfit}
           />
         </div>
       </div>
@@ -178,7 +220,7 @@ export async function getServerSideProps() {
     const stockId = purchase.stockId; // accessing the stockId of the purchase
 
     const stockResponse = await axios.get(
-      `http://localhost:4000/api/v1/investor/fetch/stock/${stockId}` // returns a stock doc
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/stock/${stockId}` // returns a stock doc
     );
     const stock = stockResponse.data; // a stock document
 

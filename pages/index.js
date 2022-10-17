@@ -151,7 +151,7 @@ export default function Home({
 
 export async function getServerSideProps() {
   const allStockList = await axios(
-    'http://localhost:4000/api/v1/investor/fetch/stocks'
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/stock`
   );
   // getting all stocks available on UpArrow (a user at the landing page where all stocks are)
   const allStockDataList = allStockList.data;

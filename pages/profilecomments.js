@@ -25,7 +25,7 @@ export async function getServerSideProps() {
     var stockId = comment.stockId;
     var userId = comment.userId;
     const stockResponse = await fetch(
-      `http://localhost:4000/api/v1/investor/fetch/stock/${stockId}`
+      `${process.env.NEXT_PUBLIC_SERVER_URL}/stock/${stockId}`
     );
     const stockDocument = await stockResponse.json();
     stockLogoList.push(stockDocument);

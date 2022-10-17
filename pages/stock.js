@@ -122,7 +122,7 @@ export default function Stock({ stockData }) {
 
     const getStockJSON = async () => {
       const stockResponse = await fetch(
-        `http://localhost:4000/api/v1/investor/fetch/stock/${stockJSONIdStr}`
+        `${NEXT_PUBLIC_SERVER_URL}/stock/${stockJSONIdStr}`
       );
       const stockData = await stockResponse.json();
       setStock(stockData);
@@ -429,7 +429,7 @@ export default function Stock({ stockData }) {
 
 export async function getServerSideProps() {
   const stockResponse = await axios.get(
-    `http://localhost:4000/api/v1/investor/fetch/stocks`
+    `${process.env.NEXT_PUBLIC_SERVER_URL}/stock`
   );
   const stockData = stockResponse.data;
 

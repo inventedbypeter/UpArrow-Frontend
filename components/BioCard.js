@@ -63,7 +63,12 @@ const BiocardBlock = styled.div`
 // UI + data fetching <= 컴포넌트 기능이 너무 커짐.
 // page: data fetching => 필요한 데이터는 UI (component)
 
-const BioCard = ({ investor, currentUserJSON }) => {
+const BioCard = ({
+  investor,
+  currentUserJSON,
+  totalInvestment,
+  totalProfit,
+}) => {
   const [followText, setFollowText] = useState('');
   const followersObjectIdList = investor.followers || []; // a prop of followers ObjectID List from investor.js
   const currentUserStrId = currentUserJSON?._id; // currently logged in user from investor.js
@@ -125,12 +130,10 @@ const BioCard = ({ investor, currentUserJSON }) => {
 
       <div class='investor-financials'>
         <div>
-          Total Investment: $
-          {new Intl.NumberFormat().format(investor.totalInvestment)}
+          Total Investment: ${new Intl.NumberFormat().format(totalInvestment)}
         </div>
         <div>
-          Total Profits: $
-          {new Intl.NumberFormat().format(investor.totalProfits)} (
+          Total Profits: ${new Intl.NumberFormat().format(totalProfit)} (
           {totalProfitArrow}{' '}
           {new Intl.NumberFormat().format(
             Math.floor((investor.totalProfits / investor.totalInvestment) * 100)

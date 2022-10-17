@@ -105,7 +105,7 @@ const numberComma = (num) => {
 
 function Buy({ stockJSON }) {
   const [open, setOpen] = useState(false);
-  const [text, setText] = useState('');
+  const [quantity, setQuantity] = useState(0);
   const [currentPrice, setCurrentPrice] = useState(0);
   const stock = stockJSON;
   const [user, setUser] = useState(null);
@@ -146,19 +146,13 @@ function Buy({ stockJSON }) {
   const showModal = () => setOpen((s) => !s);
 
   const purchaseStock = async () => {
-    const purchaseJSON = {
-      userId: String(user._id),
-      stockId: String(stock._id),
-      quantity: parseInt(text),
-      averagePrice: currentPrice,
-      totalInvested: totalInvestment,
-    };
-
     try {
-      await axios.post(
-        'http://localhost:4000/api/v1/investor/purchase',
-        purchaseJSON
-      );
+      await axios.post('http://localhost:4000/api/v1/investor/purchase', {
+        userId: String(user._id),
+        stockId: String(stock._id),
+        quantity: quantity,
+        price: currentPrice,
+      });
       setBuy(true);
       localStorage.setItem('investorStrId', purchaseJSON.userId);
       setTimeout(() => {
@@ -171,7 +165,7 @@ function Buy({ stockJSON }) {
   };
 
   const calculateTotalInvestment = () => {
-    const enteredQuantity = parseInt(text);
+    const enteredQuantity = quantity;
     const totalInvestment = currentPrice * enteredQuantity;
     setTotalInvestment(totalInvestment);
   };
@@ -198,11 +192,11 @@ function Buy({ stockJSON }) {
                 </p>
 
                 <input
-                  type='text'
+                  type='number'
                   id='quantity'
                   className='quantity'
                   name='quantity'
-                  onChange={(e) => setText(e.target.value)}
+                  onChange={(e) => setQuantity(Number(e.target.value))}
                 />
                 <button className='button' onClick={calculateTotalInvestment}>
                   Calculate
@@ -240,7 +234,7 @@ function Buy({ stockJSON }) {
                 <p className='confirmation-message'>
                   You bought{' '}
                   <span className='boldText'>
-                    {numberComma(Number(text))} shares
+                    {numberComma(Number(quantity))} shares
                   </span>{' '}
                   of <span className='boldText'>{user.stockName} </span>
                   at{' '}
@@ -253,7 +247,7 @@ function Buy({ stockJSON }) {
                   <span className='boldText'>
                     $
                     {numberComma(
-                      user.availableCash - Number(text) * currentPrice
+                      user.availableCash - Number(quantity) * currentPrice
                     )}
                   </span>
                 </p>
