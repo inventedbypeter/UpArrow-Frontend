@@ -1,11 +1,8 @@
-import React from 'react';
-import Navbar from '../components/Navbar';
+import styled from '@emotion/styled';
+import React, { useState } from 'react';
+
+const IdeasBlock = styled.div``;
 
 export default function Ideas() {
-  return (
-    <div>
-      <Navbar />
-      <h1>this is the Ideas page</h1>
-    </div>
-  );
+  return <IdeasBlock></IdeasBlock>;
 }

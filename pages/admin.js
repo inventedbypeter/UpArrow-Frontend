@@ -1,42 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from '@auth0/nextjs-auth0';
 import styled from 'styled-components';
-import axios from 'axios';
+import { useMutation, useQuery } from '@tanstack/react-query';
+import api from '../apis';
+import PriceTable from './PriceTable';
 
 const AdminBlock = styled.div`
-  padding-top: 11rem;
+  padding: 11rem;
 `;
 
-export default function Admin({ allStocksResponse }) {
-  const [userDocument, setUserDocument] = useState(null);
-  useEffect(() => {
-    const adminUserId = localStorage.getItem('adminUserId');
+export default function Admin() {
+  const { data, isLoading } = useQuery(['config'], api.config.get);
+  const [pricesData, setPricesData] = useState();
+  const updateConfig = useMutation(api.config.put(pricesData));
 
-    const getUser = async () => {
-      const userResponse = await axios.get(
-        `http://localhost:4000/api/v1/investor/fetch/userprofile/${adminUserId}`
-      );
-      setUserDocument(userResponse.data);
-    };
-    getUser();
-  }, []);
+  useEffect(() => {
+    if (data?.prices) {
+      setPricesData(data.prices);
+    }
+  }, [data]);
+
+  if (isLoading) return null;
+
+  const parsedPriceList = pricesData ? Object.entries(pricesData) : [];
+  const tickers = parsedPriceList.map((price) => price[0]);
+  const prices = parsedPriceList.map((price) => price[1]);
 
   return (
     <AdminBlock>
-      <h1>this is the admin page</h1>
-      <button>Add a stock</button>
+      <select>
+        <option>config</option>
+      </select>
+      <PriceTable
+        tickers={tickers}
+        prices={prices}
+        setPricesData={setPricesData}
+      />
+      <button
+        onClick={() => {
+          updateConfig.mutate(pricesData);
+        }}
+      >
+        Save
+      </button>
     </AdminBlock>
   );
-}
-
-export async function getServerSideProps() {
-  const getAllStocks = await axios.get(
-    'http://localhost:4000/api/v1/investor/fetch/stocks/allportfolio'
-  );
-
-  const allStocksResponse = getAllStocks.data;
-
-  return {
-    props: { allStocksResponse },
-  };
 }

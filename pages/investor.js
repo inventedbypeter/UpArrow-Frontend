@@ -48,6 +48,9 @@ const InvestorBlock = styled.div`
   }
 `;
 
+// -> 한 함수 / 모듈 / 는 한가지 일만 해야한다.  clean code
+// Investor : Investor 페이지를 보여주는 일 // 다른 기능들은 다른 파일에서 .
+
 export default function Investor({ portfolioList, allUsersListResponse }) {
   const [investor, setInvestor] = useState(null);
   const { config, loading: configLoading } = useConfig();
@@ -128,7 +131,7 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
     return currentStockPrice * quantity - investedMoney;
   });
 
-  const totalProfit = profitList.reduce((acc, profit) => profit + acc, 0);
+  const totalProfits = profitList.reduce((acc, profit) => profit + acc, 0);
   useEffect(() => {
     const investorStrId = localStorage.getItem('investorStrId');
     getInvestor(investorStrId); // called the getInvestor function in useEffect
@@ -186,7 +189,7 @@ export default function Investor({ portfolioList, allUsersListResponse }) {
             currentUserJSON={currentUser} // currently logged in user
             getInvestor={getInvestor}
             totalInvestment={currentUserTotalInvestment}
-            totalProfit={totalProfit}
+            totalProfits={totalProfits}
           />
         </div>
       </div>

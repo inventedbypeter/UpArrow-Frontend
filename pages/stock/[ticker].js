@@ -1,22 +1,18 @@
 import React, { useEffect, useState, useRef, Fragment } from 'react';
-import { useRouter } from 'next/router';
-import StarRatings from 'react-star-ratings';
-import ArgumentBox from '../components/ArgumentBox';
-import Comment from '../components/Comment';
+import Comment from '../../components/Comment';
 import { useUser } from '@auth0/nextjs-auth0';
 import axios from 'axios';
-import Navbar from '../components/Navbar';
 import styled from 'styled-components';
 import date from 'date-and-time';
-import Buy from '../components/Buy';
-import Sale from '../components/Sale';
-import StockCover from '../components/StockCover';
-import StockChart from '../components/StockChart';
-import Analyses from '../components/Analysis';
-import StarRating from '../components/StarRating';
-import Management from '../components/Management';
-import Financial from '../components/Financial';
-import UserIcon from '../components/UserIcon';
+import Buy from '../../components/Buy';
+import StockCover from '../../components/StockCover';
+import StockChart from '../../components/StockChart';
+import Analyses from '../../components/Analysis';
+import StarRating from '../../components/StarRating';
+import Management from '../../components/Management';
+import Financial from '../../components/Financial';
+import UserIcon from '../../components/UserIcon';
+import { useRouter } from 'next/router';
 
 const CommentInputBlock = styled.div`
   padding: 4rem;
@@ -80,6 +76,7 @@ const Alert = React.forwardRef(function Alert(props, ref) {
 });
 
 export default function Stock({ stockData }) {
+  const { query } = useRouter();
   const [comments, setComments] = useState([]);
   const [commentJSON, setCommentJSON] = useState(null);
   const [userId, setUserId] = useState('');
@@ -91,11 +88,12 @@ export default function Stock({ stockData }) {
   const [openNotInvest, setOpenNotInvest] = useState(false);
   const [analysis, setAnalysis] = useState(null);
   const [investors, setInvestors] = useState([]);
+
   var token = null;
 
   const fetchInvestors = async () => {
     const investorIdList =
-      stock.detailInfo.find((info) => info.type === 'investors').content || [];
+      stock.detailInfo.find((info) => info.type === 'investors')?.content || [];
     const investorList = await Promise.all(
       investorIdList.map((id) =>
         axios.get(`http://localhost:4000/api/v1/user/${id}`)
@@ -110,19 +108,16 @@ export default function Stock({ stockData }) {
   }, [stock]);
 
   useEffect(() => {
-    var stockJSONIdStr = localStorage.getItem('stockIdStr');
-    if (!stockJSONIdStr) {
-      stockJSONIdStr = localStorage.getItem('stockIdStrModal');
-    }
-    var filteredStockList = stockData.filter(
-      (stock) => !(stockJSONIdStr != String(stock._id))
+    const stockJSONIdStr = query.ticker;
+    const filteredStockList = stockData.filter(
+      (stock) => !(stockJSONIdStr !== String(stock._id))
     );
     const filteredStock = filteredStockList[0];
     setFilteredStock(filteredStock);
 
     const getStockJSON = async () => {
       const stockResponse = await fetch(
-        `${NEXT_PUBLIC_SERVER_URL}/stock/${stockJSONIdStr}`
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/stock/${stockJSONIdStr}/ticker`
       );
       const stockData = await stockResponse.json();
       setStock(stockData);
@@ -150,7 +145,6 @@ export default function Stock({ stockData }) {
     const getUserId = async () => {
       if (user) {
         token = user;
-        localStorage.setItem('email', token.email);
         const userEmail = user.email;
         const response = await fetch(
           `http://localhost:4000/api/v1/user/${userEmail}/email`
@@ -233,25 +227,6 @@ export default function Stock({ stockData }) {
     }
 
     setOpenInvest(false);
-  };
-
-  const callNotInvestAPI = async () => {
-    if (user && stock) {
-      var userEmail = user.email;
-      const response = await fetch(
-        `http://localhost:4000/api/v1/user/${userEmail}/email`
-      );
-      const data = await response.json();
-      const userId = String(data._id);
-      const stockId = String(stock._id);
-
-      await axios.put(
-        `http://localhost:4000/api/v1/investor/update/notInvest/company/${stockId}/${userId}`,
-        {}
-      );
-
-      setOpenNotInvest(true);
-    }
   };
 
   const handleNotCloseInvest = (event, reason) => {
@@ -384,7 +359,7 @@ export default function Stock({ stockData }) {
         </Analyses>
         <div className='buy-sale-btn-group'>
           <Buy stockJSON={stock} />
-          <Sale />
+          <Buy isSale stockJSON={stock} />
         </div>
         {openInvest && stock && (
           <div spacing={2} sx={{ width: '100%' }}>

@@ -67,7 +67,7 @@ const BioCard = ({
   investor,
   currentUserJSON,
   totalInvestment,
-  totalProfit,
+  totalProfits,
 }) => {
   const [followText, setFollowText] = useState('');
   const followersObjectIdList = investor.followers || []; // a prop of followers ObjectID List from investor.js
@@ -88,7 +88,7 @@ const BioCard = ({
   };
 
   const totalProfitArrow =
-    investor.totalProfits >= 0 ? (
+    totalProfits >= 0 ? (
       <ArrowUpwardRoundedIcon color='success' />
     ) : (
       <ArrowDownwardRoundedIcon color='error' />
@@ -133,10 +133,10 @@ const BioCard = ({
           Total Investment: ${new Intl.NumberFormat().format(totalInvestment)}
         </div>
         <div>
-          Total Profits: ${new Intl.NumberFormat().format(totalProfit)} (
+          Total Profits: ${new Intl.NumberFormat().format(totalProfits)} (
           {totalProfitArrow}{' '}
           {new Intl.NumberFormat().format(
-            Math.floor((investor.totalProfits / investor.totalInvestment) * 100)
+            Math.floor((totalProfits / totalInvestment) * 100)
           )}
           %)
         </div>
@@ -146,7 +146,10 @@ const BioCard = ({
         </div>
 
         <div>
-          Total Assets: ${new Intl.NumberFormat().format(investor.totalAssets)}
+          Total Assets: $
+          {new Intl.NumberFormat().format(
+            totalInvestment + totalProfits + investor.availableCash
+          )}
         </div>
       </div>
     </BiocardBlock>

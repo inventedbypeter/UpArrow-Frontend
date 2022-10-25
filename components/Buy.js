@@ -2,13 +2,14 @@ import styled from 'styled-components';
 import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
+import { numberComma } from '../utils/number';
 
 const BuyWrapper = styled.div`
   font-family: sans-serif;
   font-size: 25px;
   color: white;
-  border: 1px #34aa52;
-  background-color: #34aa52;
+  border: 1px ${({ isSale }) => (isSale ? '#ef4232' : '#34aa52')};
+  background-color: ${({ isSale }) => (isSale ? '#ef4232' : '#34aa52')};
   width: 260px;
   height: 94.25px;
   border-radius: 5px;
@@ -67,8 +68,8 @@ const ModalWrapper = styled.div`
     width: 200px;
     height: 70px;
     border-radius: 5px;
-    background-color: #34aa52;
-    border: 1px #34aa52;
+    background-color: ${({ isSale }) => (isSale ? '#ef4232' : '#34aa52')};
+    border: 1px ${({ isSale }) => (isSale ? '#ef4232' : '#34aa52')};
     margin-bottom: 15px;
   }
 
@@ -87,23 +88,7 @@ const ConfirmationWrapper = styled.div`
   }
 `;
 
-const numberComma = (num) => {
-  if (typeof num === 'number' && String(num).length > 3) {
-    num = [...String(num)].reverse().join('');
-    let newNum = '';
-    for (let i = 0; i < num.length; i++) {
-      if (i % 3 === 0 && i !== 0) {
-        newNum += ',';
-      }
-      newNum = newNum + num[i]; //8
-    }
-
-    return [...newNum].reverse().join('');
-  }
-  return num;
-};
-
-function Buy({ stockJSON }) {
+function Buy({ stockJSON, isSale }) {
   const [open, setOpen] = useState(false);
   const [quantity, setQuantity] = useState(0);
   const [currentPrice, setCurrentPrice] = useState(0);
@@ -112,6 +97,7 @@ function Buy({ stockJSON }) {
   const [totalInvestment, setTotalInvestment] = useState(0);
   const [buy, setBuy] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+  const [userCurrentStockCount, setUserCurrentStockCount] = useState(0);
 
   const router = useRouter();
 
@@ -136,29 +122,56 @@ function Buy({ stockJSON }) {
   const getAverageStockPrice = async () => {
     const response = await axios.get('http://localhost:4000/api/v1/config');
     const currentStockPrices = response.data.prices;
-    console.log('currentStockPrice : ', currentStockPrices);
-    console.log('ticker : ', stockJSON.ticker);
     const currentPrice = currentStockPrices[stockJSON.ticker];
-    console.log('currentPrice : ', currentPrice);
     setCurrentPrice(currentPrice);
   };
+
+  useEffect(() => {
+    const getUserPurchases = async () => {
+      const userPurchases = (
+        await axios(`http://localhost:4000/api/v1/purchase/${user._id}/user`)
+      ).data;
+
+      console.log('userPurchases : ', userPurchases);
+      const userStock = userPurchases.find(
+        (purchase) => purchase.stockId === stock?._id
+      );
+
+      setUserCurrentStockCount(userStock?.quantity || 0);
+    };
+    if (user) {
+      getUserPurchases();
+    }
+  }, [user]);
 
   const showModal = () => setOpen((s) => !s);
 
   const purchaseStock = async () => {
     try {
-      await axios.post('http://localhost:4000/api/v1/investor/purchase', {
-        userId: String(user._id),
-        stockId: String(stock._id),
-        quantity: quantity,
-        price: currentPrice,
-      });
+      if (isSale) {
+        await axios.put('http://localhost:4000/api/v1/investor/sell', {
+          userId: String(user._id),
+          stockId: String(stock._id),
+          quantity: quantity,
+          price: currentPrice,
+        });
+      } else {
+        await axios.post('http://localhost:4000/api/v1/investor/purchase', {
+          userId: String(user._id),
+          stockId: String(stock._id),
+          quantity: quantity,
+          price: currentPrice,
+        });
+      }
+
       setBuy(true);
-      localStorage.setItem('investorStrId', purchaseJSON.userId);
+      localStorage.setItem('investorStrId', user._id);
       setTimeout(() => {
         router.push('/investor');
-      }, 10000);
+        console.log('push to investor');
+      }, 5000);
     } catch (error) {
+      console.log('redirect error : ', error);
       setErrorMsg(JSON.stringify(error.message));
       return;
     }
@@ -172,11 +185,13 @@ function Buy({ stockJSON }) {
 
   return (
     <>
-      <BuyWrapper onClick={showModal}>Buy</BuyWrapper>
+      <BuyWrapper onClick={showModal} isSale={isSale}>
+        {isSale ? 'Sale' : 'Buy'}
+      </BuyWrapper>
 
       {open ? (
         <>
-          <ModalWrapper>
+          <ModalWrapper isSale={isSale}>
             {!buy ? (
               <>
                 <img className='stockLogo' src={stock?.profile_image_url} />
@@ -184,11 +199,15 @@ function Buy({ stockJSON }) {
                   Stock Name: <div className='boldText'>{stock?.name}</div>
                 </p>
                 <p>
+                  Available stocks to sell :{' '}
+                  <div className='boldText'>{userCurrentStockCount}</div>
+                </p>
+                <p>
                   Current Price:{' '}
                   <div className='boldText'>${numberComma(currentPrice)}</div>
                 </p>
                 <p className='boldText'>
-                  How many shares would you like to buy?
+                  How many shares would you like to {isSale ? 'sell' : 'buy'}
                 </p>
 
                 <input
@@ -203,7 +222,7 @@ function Buy({ stockJSON }) {
                 </button>
 
                 <p>
-                  Total Investment:{' '}
+                  Total {isSale ? 'Sale' : 'Investment'}:{' '}
                   <div className='boldText'>
                     ${numberComma(totalInvestment)}
                   </div>
@@ -216,7 +235,7 @@ function Buy({ stockJSON }) {
                 </p>
 
                 <button className='button' onClick={purchaseStock}>
-                  Buy
+                  {isSale ? 'Sell' : 'Buy'}
                 </button>
                 <p className='error-message'>{errorMsg}</p>
                 <p className='stock-price-disclaimer'>
@@ -224,15 +243,15 @@ function Buy({ stockJSON }) {
                   stock
                 </p>
                 <p className='simulation-disclaimer'>
-                  * UpArrow is an investment simulator, you are not buying the
-                  actual {stock?.name} stock
+                  * UpArrow is an investment simulator, you are not{' '}
+                  {isSale ? 'selling' : 'buying'} the actual {stock?.name} stock
                 </p>
               </>
             ) : (
               <ConfirmationWrapper>
                 <p className='congratulations'>Congratulations!</p>
                 <p className='confirmation-message'>
-                  You bought{' '}
+                  You {isSale ? 'sold ' : 'bought'}{' '}
                   <span className='boldText'>
                     {numberComma(Number(quantity))} shares
                   </span>{' '}
@@ -247,7 +266,9 @@ function Buy({ stockJSON }) {
                   <span className='boldText'>
                     $
                     {numberComma(
-                      user.availableCash - Number(quantity) * currentPrice
+                      isSale
+                        ? user.availableCash + Number(quantity) * currentPrice
+                        : user.availableCash - Number(quantity) * currentPrice
                     )}
                   </span>
                 </p>

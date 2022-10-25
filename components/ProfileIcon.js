@@ -49,7 +49,7 @@ const ProfileIcon = ({ className, data }) => {
   const router = useRouter();
   const [isOpen, setIsOpen] = useState(false);
 
-  const profileImageUrl = data?.profileImageUrl;
+  const profileImageUrl = data?.profile_image_url;
   const isLogin = !!data;
 
   const navigateProfile = () => {

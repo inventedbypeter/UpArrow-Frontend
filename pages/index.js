@@ -40,6 +40,12 @@ const IndexWrapper = styled.div`
     gap: 1rem;
   }
 `;
+// Lead -> 설계  [ ] [  ] [ ] [ ]
+//어junior, 시니어
+
+// AI -> // AI 특이점 (오기 직전의 세대)
+// AI 일을 다한다. -> 사람 일자리 X -> 사람이 일을 안해도 됨.
+// 필수 편안.
 
 export default function Home({
   sortedStockDataList,
@@ -79,13 +85,14 @@ export default function Home({
     getUser();
   }, [user]);
 
-  const logoList = sortedStockDataList.map((data) => {
-    return <Logo stockJSON={data} />;
+  const logoList = sortedStockDataList.map((data, index) => {
+    return <Logo key={index} stockJSON={data} />;
   });
 
   const postList = postDataList.map((post) => {
     return (
       <PostCard
+        key={post.title}
         postImage={post.image_url}
         postTitle={post.title}
         postAuthor={post.userName}
@@ -100,6 +107,7 @@ export default function Home({
     .map((investor) => {
       return (
         <InvestorCard
+          key={investor._id}
           investorId={investor._id}
           investorName={investor.name}
           investorAvatar={investor.profile_image_url}
@@ -110,11 +118,11 @@ export default function Home({
       );
     });
 
-  var options = [];
-  var valueCount = 0;
+  let options = [];
+  let valueCount = 0;
 
-  for (var i = 0; i < sortedStockDataList.length; i++) {
-    var labelJSON = {};
+  for (let i = 0; i < sortedStockDataList.length; i++) {
+    let labelJSON = {};
     valueCount++;
     labelJSON['value'] = valueCount;
     labelJSON['label'] = sortedStockDataList[i].name;

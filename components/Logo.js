@@ -15,16 +15,13 @@ const LogoBlock = styled.img`
   }
 `;
 
-const Logo = (props) => {
+const Logo = ({ stockJSON }) => {
   const { user, error, isLoading } = useUser();
   const router = useRouter();
 
-  const checkAuthentication = (abc) => {
+  const checkAuthentication = () => {
     if (user) {
-      var stockIdStr = String(abc._id);
-      localStorage.setItem('stockIdStr', stockIdStr);
-      localStorage.removeItem('stockIdStrModal');
-      router.push('/stock');
+      router.push(`/stock/${stockJSON.ticker}`);
     } else {
       router.push('/api/auth/login');
     }
@@ -32,8 +29,8 @@ const Logo = (props) => {
 
   return (
     <LogoBlock
-      src={props.stockJSON.profile_image_url}
-      onClick={() => checkAuthentication(props.stockJSON)}
+      src={stockJSON.profile_image_url}
+      onClick={() => checkAuthentication()}
     />
   );
 };

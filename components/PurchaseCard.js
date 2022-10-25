@@ -3,6 +3,8 @@ import * as React from 'react';
 import styled from 'styled-components';
 import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
 import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
+import { useConfig } from '../hooks/useConfig';
+import { useRouter } from 'next/router';
 
 const PurchaseBlock = styled.div`
   border: solid 0.1rem #dee0e3;
@@ -40,25 +42,34 @@ const PurchaseBlock = styled.div`
 `;
 
 const PurchaseCard = ({ purchase }) => {
+  const { _id, userId, stockId, stock, quantity, averagePrice } = purchase;
+  const {
+    config: { prices },
+  } = useConfig();
+  const router = useRouter();
+  const profits = (prices?.[stock.ticker] - averagePrice) * quantity;
+  const profitTextColor = profits >= 0 ? 'green' : 'red';
   const profitArrow =
-    purchase.profit >= 0 ? (
+    profits >= 0 ? (
       <ArrowUpwardRoundedIcon color='success' />
     ) : (
       <ArrowDownwardRoundedIcon color='error' />
     );
 
-  const profitTextColor = purchase.profit >= 0 ? 'green' : 'red';
-
   return (
-    <PurchaseBlock>
+    <PurchaseBlock
+      onClick={() => {
+        router.push(`/stock/${stock.ticker}`);
+      }}
+    >
       <div className='picture'>
-        <img src={purchase.logo}></img>
+        <img src={stock.profile_image_url}></img>
       </div>
 
       <div className='purchaseInfo'>
-        <div className='ticker'>{purchase.ticker}</div>
+        <div className='ticker'>{stock.ticker}</div>
 
-        <div className='shares'>{purchase.quantity} Shares</div>
+        <div className='shares'>{quantity} Shares</div>
 
         <div className='profits'>
           <p style={{ color: `${profitTextColor}` }}>
@@ -66,16 +77,7 @@ const PurchaseCard = ({ purchase }) => {
             {new Intl.NumberFormat('en-US', {
               style: 'currency',
               currency: 'USD',
-            }).format(purchase.profit)}
-          </p>
-        </div>
-        <div>
-          <p>
-            {'Total Invested: '}
-            {new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD',
-            }).format(purchase.totalInvested)}
+            }).format(profits)}
           </p>
         </div>
       </div>
