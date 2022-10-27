@@ -1,7 +1,7 @@
 import { Editor } from '@toast-ui/react-editor';
-import { useRef } from 'react';
-const ToastEditor = () => {
-  const editorRef = useRef();
+import { forwardRef } from 'react';
+
+const ToastEditor = forwardRef(({ editorRef }) => {
   return (
     <>
       <Editor
@@ -12,13 +12,8 @@ const ToastEditor = () => {
         useCommandShortcut={true}
         ref={editorRef}
       />
-      <button
-        onClick={() => {
-          console.log(editorRef.current.getInstance().getHTML());
-        }}
-      ></button>
     </>
   );
-};
+});
 
 export default ToastEditor;
