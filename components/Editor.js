@@ -4,7 +4,7 @@ import '@toast-ui/editor/dist/toastui-editor.css';
 import axios from 'axios';
 import { useQuery } from '@tanstack/react-query';
 import dynamic from 'next/dynamic';
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { env } from '../config';
 import api from '../apis';
 
@@ -18,20 +18,37 @@ const InputWrapper = styled.div`
   flex-direction: column;
 `;
 
-const App = () => {
+const Editor = ({ editData }) => {
   const { data: stocks } = useQuery(['stock'], api.stock.get);
   const { user } = useUser();
-  const titleRef = useRef();
-  const thumbnailRef = useRef();
-  const stockIdRef = useRef();
-  const editorRef = useRef();
+  const [postForm, setPostForm] = useState(
+    editData || { title: '', content: '', thumbnailImageUrl: '', stockId: '' }
+  );
 
   return (
     <EditorBlock>
       <InputWrapper>
-        <input ref={titleRef} placeholder='title' />
-        <input ref={thumbnailRef} placeholder='thumbnail image url' />
-        <select ref={stockIdRef} placeholder='stock'>
+        <input
+          value={postForm.title}
+          onChange={(e) =>
+            setPostForm((s) => ({ ...s, title: e.target.value }))
+          }
+          placeholder='title'
+        />
+        <input
+          value={postForm.thumbnailImageUrl}
+          onChange={(e) =>
+            setPostForm((s) => ({ ...s, thumbnailImageUrl: e.target.value }))
+          }
+          placeholder='thumbnail image url'
+        />
+        <select
+          placeholder='stock'
+          value={postForm.stockId}
+          onChange={(e) =>
+            setPostForm((s) => ({ ...s, stockId: e.target.value }))
+          }
+        >
           {stocks?.map((stock) => {
             return (
               <option key={stock._id} value={stock._id}>
@@ -40,29 +57,21 @@ const App = () => {
             );
           })}
         </select>
-        <ToastEditor editorRef={editorRef} />
+        <ToastEditor content={postForm.content} setPostForm={setPostForm} />
       </InputWrapper>
 
       <button
         onClick={() => {
-          const content = editorRef.current.getInstance().getHTML();
-          const title = titleRef.current.value;
-          const thumbnailImageUrl = thumbnailRef.current.value;
-          const stockId = stockIdRef.current.value;
-
           axios.post(env.serverUrl + '/post', {
-            content,
-            title,
-            thumbnailImageUrl,
-            stockId,
+            ...postForm,
             email: user.email,
           });
         }}
       >
-        Post
+        {editData ? 'Edit' : 'Post'}
       </button>
     </EditorBlock>
   );
 };
 
-export default App;
+export default Editor;

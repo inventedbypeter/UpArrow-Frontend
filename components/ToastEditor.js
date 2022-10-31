@@ -1,11 +1,18 @@
 import { Editor } from '@toast-ui/react-editor';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useRef } from 'react';
 
-const ToastEditor = forwardRef(({ editorRef }) => {
+const ToastEditor = ({ content, setPostForm }) => {
+  const editorRef = useRef();
   return (
     <>
       <Editor
-        initialValue='hello react editor world!'
+        initialValue={content}
+        onChange={() => {
+          setPostForm((s) => ({
+            ...s,
+            content: editorRef.current.getInstance().getHTML(),
+          }));
+        }}
         previewStyle='vertical'
         height='600px'
         initialEditType='markdown'
@@ -14,6 +21,6 @@ const ToastEditor = forwardRef(({ editorRef }) => {
       />
     </>
   );
-});
+};
 
 export default ToastEditor;
