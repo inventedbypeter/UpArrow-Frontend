@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef, Fragment } from 'react';
 import Comment from '../../components/Comment';
 import { useUser } from '@auth0/nextjs-auth0';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import date from 'date-and-time';
 import Buy from '../../components/Buy';
 import StockCover from '../../components/StockCover';

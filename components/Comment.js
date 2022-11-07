@@ -1,13 +1,10 @@
 import React, { useEffect, useState, Fragment } from 'react';
-import { makeStyles } from '@material-ui/core';
-import { Checkbox, FormControlLabel } from '@mui/material';
 import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
 import Favorite from '@mui/icons-material/Favorite';
-import { Avatar, Grid, Paper } from '@material-ui/core';
 import { useUser } from '@auth0/nextjs-auth0';
 import './Comment.module.css';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import UserIcon from './UserIcon';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';

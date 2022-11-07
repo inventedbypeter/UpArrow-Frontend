@@ -3,7 +3,7 @@ import SearchBar from '../components/SearchBar';
 import PostCard from '../components/PostCard';
 import InvestorCard from '../components/InvestorCard';
 import React, { useEffect } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import axios from 'axios';
 import { useUser } from '@auth0/nextjs-auth0';
 import { useRouter } from 'next/router';

@@ -7,6 +7,7 @@ const App = () => {
   const router = useRouter();
   const { id } = router.query;
   const { data, isLoading } = useQuery(['post', id], api.post.getId(id));
+  console.log('data : ', data);
   if (isLoading) {
     return null;
   }

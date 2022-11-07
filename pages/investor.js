@@ -3,7 +3,7 @@ import BioCard from '../components/BioCard';
 import PurchaseCard from '../components/PurchaseCard';
 import axios from 'axios';
 import { useRouter } from 'next/router';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { useConfig } from '../hooks/useConfig';
 
 const InvestorBlock = styled.div`

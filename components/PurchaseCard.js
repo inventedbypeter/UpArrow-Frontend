@@ -1,6 +1,6 @@
 import { WorkOutlined } from '@mui/icons-material';
 import * as React from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
 import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useConfig } from '../hooks/useConfig';

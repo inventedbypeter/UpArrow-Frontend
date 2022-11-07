@@ -1,7 +1,5 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { useState } from 'react';
-import Image from 'next/image';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { useRouter } from 'next/router';
 
 const ProfileIconWrapper = styled.div`
@@ -66,10 +64,11 @@ const ProfileIcon = ({ className, data }) => {
             onClick={() => setIsOpen(!isOpen)}
           />
         ) : (
-          <AccountCircleIcon
-            sx={{ fontSize: 40 }}
-            onClick={() => setIsOpen(!isOpen)}
-          />
+          // <AccountCircleIcon
+          //   sx={{ fontSize: 40 }}
+          //   onClick={() => setIsOpen(!isOpen)}
+          // />
+          <div>CircleIcon</div>
         )}
 
         {isOpen && (

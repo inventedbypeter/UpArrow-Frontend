@@ -2,11 +2,8 @@ import React, { useRef } from 'react';
 import '../styles/reset.css';
 import '../styles/globals.css';
 import { UserProvider } from '@auth0/nextjs-auth0';
-import 'bootstrap/dist/css/bootstrap.css';
 import Head from 'next/head';
 import PropTypes from 'prop-types';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
 import { CacheProvider } from '@emotion/react';
 import theme from '../src/theme';
 import createEmotionCache from '../src/createEmotionCache';
@@ -17,7 +14,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from '@tanstack/react-query';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const clientSideEmotionCache = createEmotionCache();
 
@@ -57,22 +54,19 @@ function MyApp({
                   rel='stylesheet'
                 ></link>
               </Head>
-              <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <Navbar
+              <Navbar
+                stockRef={stockRef}
+                ideaRef={ideaRef}
+                investorRef={investorRef}
+              ></Navbar>
+              <ComponentWrapper>
+                <Component
                   stockRef={stockRef}
                   ideaRef={ideaRef}
                   investorRef={investorRef}
-                ></Navbar>
-                <ComponentWrapper>
-                  <Component
-                    stockRef={stockRef}
-                    ideaRef={ideaRef}
-                    investorRef={investorRef}
-                    {...pageProps}
-                  />
-                </ComponentWrapper>
-              </ThemeProvider>
+                  {...pageProps}
+                />
+              </ComponentWrapper>
             </UserProvider>
           </CacheProvider>
         </Hydrate>

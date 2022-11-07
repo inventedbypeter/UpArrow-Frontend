@@ -1,9 +1,5 @@
-import * as React from 'react';
-import Grid from '@mui/material/Grid';
-import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
-import ButtonBase from '@mui/material/ButtonBase';
-import styled from 'styled-components';
+import React from 'react';
+import styled from '@emotion/styled';
 
 const PostWrapper = styled.div`
   cursor: pointer;
@@ -43,9 +39,6 @@ const PostWrapper = styled.div`
     font-weight: bold;
     font-family: lato;
   }
-
-  /* background-color: ${({ theme }) =>
-    theme.palette.mode === 'dark' ? '#1A2027' : '#fff'}; */
 `;
 
 const Img = styled('img')({

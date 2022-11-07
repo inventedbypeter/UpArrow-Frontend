@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,

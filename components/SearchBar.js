@@ -2,9 +2,8 @@ import React, { Component, useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useRouter } from 'next/router';
 import { useUser } from '@auth0/nextjs-auth0';
-import SearchIcon from '@material-ui/icons/Search';
 import './SearchBar.module.css';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const SearchBarWrapper = styled.div`
   .searchSelect__control {

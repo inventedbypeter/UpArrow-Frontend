@@ -11,7 +11,7 @@ import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import ProfileModal from './ProfileModal';
 import Grid from '@mui/material/Grid';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const BiocardBlock = styled.div`
   padding-left: 2rem;

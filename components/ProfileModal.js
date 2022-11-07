@@ -5,7 +5,7 @@ import DialogTitle from '@mui/material/DialogTitle';
 import Dialog from '@mui/material/Dialog';
 import { useRouter } from 'next/router';
 import axios from 'axios';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const InvestorSocialBlock = styled.div`
   .social-button {

@@ -1,7 +1,7 @@
 import React from 'react';
 import { useUser } from '@auth0/nextjs-auth0';
 import { useRouter } from 'next/router';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const LogoBlock = styled.img`
   width: 20rem;

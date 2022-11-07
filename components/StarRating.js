@@ -1,5 +1,5 @@
 import StarRatings from 'react-star-ratings';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const StarRatingWrapper = styled.div`
   display: flex;

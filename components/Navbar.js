@@ -1,6 +1,6 @@
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 // import ProfileIcon from "../images/profile.svg";
 import { useUser } from '@auth0/nextjs-auth0';
 import axios from 'axios';

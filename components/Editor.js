@@ -19,12 +19,26 @@ const InputWrapper = styled.div`
 `;
 
 const Editor = ({ editData }) => {
+  console.log('editdata : ', editData);
   const { data: stocks } = useQuery(['stock'], api.stock.get);
   const { user } = useUser();
   const [postForm, setPostForm] = useState(
     editData || { title: '', content: '', thumbnailImageUrl: '', stockId: '' }
   );
 
+  const submit = () => {
+    if (editData) {
+      axios.put(`${env.serverUrl}/post/${editData._id}`, {
+        ...postForm,
+        email: user.email,
+      });
+    } else {
+      axios.post(env.serverUrl + '/post', {
+        ...postForm,
+        email: user.email,
+      });
+    }
+  };
   return (
     <EditorBlock>
       <InputWrapper>
@@ -60,16 +74,7 @@ const Editor = ({ editData }) => {
         <ToastEditor content={postForm.content} setPostForm={setPostForm} />
       </InputWrapper>
 
-      <button
-        onClick={() => {
-          axios.post(env.serverUrl + '/post', {
-            ...postForm,
-            email: user.email,
-          });
-        }}
-      >
-        {editData ? 'Edit' : 'Post'}
-      </button>
+      <button onClick={submit}>{editData ? 'Edit' : 'Post'}</button>
     </EditorBlock>
   );
 };

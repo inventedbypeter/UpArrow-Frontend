@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useUser } from '@auth0/nextjs-auth0';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import api from '../apis';
 import PriceTable from './PriceTable';

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const AnalysesWrapper = styled.div`
   padding: 2rem 3.4rem;

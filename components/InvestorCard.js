@@ -1,12 +1,9 @@
 import React from 'react';
-import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
 import ArrowUpwardRoundedIcon from '@mui/icons-material/ArrowUpwardRounded';
 import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useRouter } from 'next/router';
 import { useUser } from '@auth0/nextjs-auth0';
-import styled from 'styled-components';
+import styled from '@emotion/styled';
 
 const InvestorCardWrapper = styled.div`
   border: solid 0.1rem #dee0e3;
