@@ -93,11 +93,13 @@ export default function Home({
     return (
       <PostCard
         key={post.title}
-        postImage={post.image_url}
+        postId={post._id}
+        postImage={post.thumbnailImageUrl}
         postTitle={post.title}
-        postAuthor={post.userName}
+        postAuthor={post.username}
         postDate={post.date}
         postLikes={post.likes.length}
+        stockId={post.stockId}
       />
     );
   });
@@ -172,9 +174,12 @@ export async function getServerSideProps() {
   });
   // making all stock data in alphabetical order
 
-  const topSixPost = await axios(
-    'http://localhost:4000/api/v1/post/fetch/top/six'
-  );
+  const topSixPost = await axios('http://localhost:4000/api/v1/post', {
+    params: {
+      order: 'desc',
+      limit: 6,
+    },
+  });
   const postDataList = topSixPost.data;
   // a user is getting top 6 posts (on index.js)
 

@@ -9,18 +9,23 @@ const VoteBlock = styled.div`
   padding: 2rem;
 `;
 
-const Vote = ({ userId, postId }) => {
-  const createVote = useMutation(api.vote.post);
+const Vote = ({ userId, postId, refetch }) => {
+  const createVote = useMutation(api.vote.post, { onSuccess: () => refetch() });
   const voteData = { userId, postId };
-  console.log('voteData : ', voteData);
 
   return (
     <VoteBlock>
-      <button onClick={() => createVote.mutate({ ...voteData, isAgree: true })}>
+      <button
+        onClick={() => {
+          createVote.mutate({ ...voteData, isAgree: true });
+        }}
+      >
         Agree
       </button>
       <button
-        onClick={() => createVote.mutate({ ...voteData, isAgree: false })}
+        onClick={() => {
+          createVote.mutate({ ...voteData, isAgree: false });
+        }}
       >
         Disagree
       </button>

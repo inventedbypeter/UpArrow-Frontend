@@ -16,16 +16,22 @@ const IdeasBlock = styled.div`
 
 export default function Ideas({ post }) {
   const router = useRouter();
+  const { id } = router.query;
   const { user } = useUser();
   const { data, isLoading } = useQuery(
     ['user', user?.email],
     api.user.getByEmail(user?.email)
   );
+  const {
+    data: voteData,
+    isLoading: isVoteDataLoading,
+    refetch,
+  } = useQuery(['voteByPostId', id], api.vote.getByPostId(id));
 
-  const { id } = router.query;
-  if (isLoading) {
+  if (isLoading || isVoteDataLoading) {
     return null;
   }
+  console.log('outer voteData : ', voteData);
   return (
     <IdeasBlock>
       <h1>{post.title}</h1>
@@ -44,9 +50,11 @@ export default function Ideas({ post }) {
           edit
         </button>
       </div>
-      <div>agree : {post.agreeCount}</div>
-      <div>disagree : {post.disagreeCount}</div>
-      <Vote userId={data._id} postId={id} />
+      <div>agree : {voteData.data.filter((vote) => vote.isAgree).length}</div>
+      <div>
+        disagree : {voteData.data.filter((vote) => !vote.isAgree).length}
+      </div>
+      <Vote userId={data._id} postId={id} refetch={refetch} />
     </IdeasBlock>
   );
 }
