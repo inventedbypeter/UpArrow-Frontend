@@ -17,7 +17,6 @@ const InvestorSocialBlock = styled.div`
     color: rgb(32, 38, 46);
     font-size: 1.6rem;
     margin-bottom: 2rem;
-    font-family: lato;
     font-weight: 900;
     :hover {
       border: 0.3rem solid gray;

@@ -7,6 +7,7 @@ import styled from '@emotion/styled';
 import axios from 'axios';
 import { useUser } from '@auth0/nextjs-auth0';
 import { useRouter } from 'next/router';
+import { MainLayout } from '../Layouts';
 
 const IndexWrapper = styled.div`
   padding: 3rem;
@@ -16,7 +17,6 @@ const IndexWrapper = styled.div`
     color: rgb(32, 38, 46);
     font-size: 2.4rem;
     margin-bottom: 2rem;
-    font-family: lato;
     font-weight: 900;
   }
 
@@ -47,7 +47,7 @@ const IndexWrapper = styled.div`
 // AI 일을 다한다. -> 사람 일자리 X -> 사람이 일을 안해도 됨.
 // 필수 편안.
 
-export default function Home({
+function Home({
   sortedStockDataList,
   postDataList,
   investorDataList,
@@ -204,4 +204,12 @@ export async function getServerSideProps() {
   return {
     props: { sortedStockDataList, postDataList, investorDataList },
   };
+}
+
+export default function MainPage(props) {
+  return (
+    <MainLayout>
+      <Home {...props} />
+    </MainLayout>
+  );
 }

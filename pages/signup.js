@@ -18,7 +18,6 @@ const SignupBlock = styled.div`
     margin-bottom: 3rem;
     display: flex;
     flex-direction: column;
-    font-family: lato;
     font-size: 2rem;
 
     & > label {
@@ -35,7 +34,6 @@ const SignupBlock = styled.div`
     color: rgb(32, 38, 46);
     font-size: 1.6rem;
     margin-bottom: 2rem;
-    font-family: lato;
     font-weight: 900;
     :hover {
       border: 0.3rem solid gray;

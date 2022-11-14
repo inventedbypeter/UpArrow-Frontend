@@ -13,7 +13,6 @@ const NavBlock = styled.div`
   background-color: white;
   color: black;
   font-size: 2.1rem;
-  font-family: lato;
   font-weight: 900;
   align-items: center;
   justify-content: space-between;
@@ -78,7 +77,6 @@ const NavBlock = styled.div`
   .admin-button {
     border-radius: 2rem;
     font-size: 1.4rem;
-    font-family: lato;
     font-weight: bold;
     padding: 1.2rem;
     background-color: white;

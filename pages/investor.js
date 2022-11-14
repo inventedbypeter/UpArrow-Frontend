@@ -43,7 +43,6 @@ const InvestorBlock = styled.div`
     color: rgb(32, 38, 46);
     font-size: 2.4rem;
     margin-bottom: 2rem;
-    font-family: lato;
     font-weight: 900;
   }
 `;

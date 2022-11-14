@@ -30,14 +30,12 @@ const InvestorCardWrapper = styled.div`
   .investorName {
     font-size: 2rem;
     font-weight: bold;
-    font-family: lato;
     margin-bottom: 3rem;
   }
 
   p {
     font-size: 1.5rem;
     font-weight: bold;
-    font-family: lato;
     margin-bottom: 0rem;
   }
 
