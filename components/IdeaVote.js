@@ -27,7 +27,6 @@ const IdeaVoteBlock = styled.div`
   }
 
   .vote-bar {
-    width: 200px;
     display: flex;
     border-radius: 999rem;
     overflow: hidden;

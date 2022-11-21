@@ -4,14 +4,24 @@ import ArrowDownwardRoundedIcon from '@mui/icons-material/ArrowDownwardRounded';
 import { useRouter } from 'next/router';
 import { useUser } from '@auth0/nextjs-auth0';
 import styled from '@emotion/styled';
+import color from '../styles/color';
+import {
+  Body12Medium,
+  HeadH4Bold,
+  HeadH5Bold,
+  HeadH6Bold,
+} from '../styles/typography';
+import Rank from './common/Rank';
 
 const InvestorCardWrapper = styled.div`
-  border: solid 0.1rem #dee0e3;
-  width: 44rem;
-  box-shadow: 0rem 0rem 0.2rem #c4c7cc;
-  border-radius: 0.6rem;
-  padding: 1rem;
+  position: relative;
+  border: solid 0.1rem ${color.B80};
+  width: 22.8rem;
+  padding: 2.4rem;
+  border-radius: 1.6rem;
   display: flex;
+  flex-direction: column;
+  align-items: center;
   flex-wrap: wrap;
   cursor: pointer;
   :hover {
@@ -25,12 +35,21 @@ const InvestorCardWrapper = styled.div`
     border-radius: 99.9rem;
     margin-right: 1rem;
     margin-bottom: 1rem;
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .investorImg {
+    width: 11rem;
+    height: 11rem;
+    background-color: gray;
+    border-radius: 999px;
   }
 
   .investorName {
-    font-size: 2rem;
-    font-weight: bold;
-    margin-bottom: 3rem;
+    ${HeadH4Bold}
+    margin-bottom: 0.8rem;
   }
 
   p {
@@ -40,7 +59,34 @@ const InvestorCardWrapper = styled.div`
   }
 
   .totalProfits {
-    color: ${({ totalProfitTextColor }) => totalProfitTextColor};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 1.6rem;
+    & > .label {
+      ${Body12Medium};
+    }
+    & > .amount {
+      ${HeadH5Bold};
+    }
+  }
+
+  .stock-wrapper {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+
+    .stock {
+      background-color: ${color.B93};
+      width: 100%;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 999rem;
+      ${Body12Medium};
+    }
   }
 
   .totalAssets {
@@ -55,18 +101,11 @@ const InvestorCard = ({
   totalInvestment,
   totalProfits,
   totalAssets,
+  profitPercentageList,
+  rank,
 }) => {
   const router = useRouter();
   const { user, error, isLoading } = useUser();
-
-  const totalProfitTextColor = totalProfits >= 0 ? 'green' : 'red';
-  const totalProfitArrow =
-    totalProfits >= 0 ? (
-      <ArrowUpwardRoundedIcon color='success' />
-    ) : (
-      <ArrowDownwardRoundedIcon color='error' />
-    );
-  const totalAssetsTextColor = totalProfits >= 0 ? 'green' : 'red';
 
   const seeInvestor = () => {
     if (user) {
@@ -79,32 +118,39 @@ const InvestorCard = ({
     }
   };
 
-  const totalProfitPercentage = (totalProfits / totalInvestment) * 100;
-
+  console.log('investorAvatar : ', investorAvatar);
   return (
     <InvestorCardWrapper
       onClick={() => seeInvestor()}
       investorAvatar={investorAvatar}
-      totalProfitTextColor={totalProfitTextColor}
-      totalAssetsTextColor={totalAssetsTextColor}
     >
+      <Rank rank={rank} />
       <div className='investorImg'>
-        <img className='avatar' alt={investorName} src={investorAvatar} />
+        {investorAvatar ? (
+          <img className='avatar' alt={investorName} src={investorAvatar} />
+        ) : (
+          <div className='empty'>empty</div>
+        )}
       </div>
 
-      <div className='investorInfo'>
-        <div className='investorName'>{investorName}</div>
-        <p>
-          Total Investment: ${new Intl.NumberFormat().format(totalInvestment)}
-        </p>
-        <p className='totalProfits'>
-          Total Profits: ${new Intl.NumberFormat().format(totalProfits)} (
-          {totalProfitArrow}{' '}
-          {new Intl.NumberFormat().format(totalProfitPercentage)}%)
-        </p>
-        <p className='totalAssets'>
-          Total Assets: ${new Intl.NumberFormat().format(totalAssets)}
-        </p>
+      <div className='investorName'>{investorName}</div>
+      <div className='totalProfits'>
+        <div className='label'>Total Profits</div>
+        <div className='amount'>
+          ${new Intl.NumberFormat().format(totalProfits)}
+        </div>
+      </div>
+      <div className='stock-wrapper'>
+        {profitPercentageList
+          .sort((a, b) => b.percent - a.percent)
+          .slice(0, 3)
+          .map(({ stockName, ticker, percent }) => {
+            return (
+              <div className='stock' key={ticker}>
+                {stockName} {percent}%
+              </div>
+            );
+          })}
       </div>
     </InvestorCardWrapper>
   );

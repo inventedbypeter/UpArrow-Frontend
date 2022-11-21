@@ -26,8 +26,8 @@ const ProfileIconWrapper = styled.div`
   }
 
   .profile-icon {
-    width: 2rem;
-    height: 2rem;
+    width: 6rem;
+    height: 6rem;
     border: 1px solid black;
     border-radius: 9999rem;
   }

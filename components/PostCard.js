@@ -15,23 +15,20 @@ const timeAgo = new TimeAgo('en-US');
 
 const PostWrapper = styled.div`
   cursor: pointer;
-  max-width: 500;
   display: flex;
-  width: 52rem;
+  width: 59rem;
   gap: 2rem;
   cursor: pointer;
-  border: 0.1rem solid transparent;
-  border-radius: 0.8rem;
-  padding: 0.4rem;
-
-  :hover {
-    border: 0.1rem solid gray;
+  padding: 2.4rem;
+  :nth-child(-n + 2) {
+    padding-top: 0;
   }
 
   .textBlock {
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
+    width: 100%;
 
     .title {
       ${HeadH4Bold}
@@ -74,7 +71,7 @@ const PostCard = ({
   return (
     <PostWrapper theme={theme} onClick={() => router.push(`/ideas/${postId}`)}>
       <div className='image'>
-        <Img alt='post-card-image' src={postImage} />
+        {postImage ? <Img alt='post-card-image' src={postImage} /> : null}
       </div>
 
       <div className='textBlock'>

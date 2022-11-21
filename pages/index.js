@@ -8,30 +8,40 @@ import axios from 'axios';
 import { useUser } from '@auth0/nextjs-auth0';
 import { useRouter } from 'next/router';
 import { MainLayout } from '../Layouts';
+import { HeadH2Bold } from '../styles/typography';
+import Banner from '../components/common/Banner';
+import stock from '../apis/stock';
 
 const IndexWrapper = styled.div`
-  padding: 3rem;
   margin-bottom: 5rem;
 
   .text {
-    color: rgb(32, 38, 46);
-    font-size: 2.4rem;
-    margin-bottom: 2rem;
-    font-weight: 900;
+    ${HeadH2Bold}
+    margin-bottom: 2.4rem;
+  }
+
+  .main-items {
+    padding: 3.2rem;
   }
 
   .stockList {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 2.4rem 4.2rem;
+    padding-bottom: 3.2rem;
   }
 
   .postList {
     display: flex;
     flex-wrap: wrap;
-    gap: 1rem;
     margin-bottom: 2rem;
+
+    & > div {
+      &:not(:nth-last-child(-n
+            + ${({ postLength }) => (postLength % 2 ? 1 : 2)})) {
+        border-bottom: 0.1rem solid #d9d9d9;
+      }
+    }
   }
 
   .investorList {
@@ -85,7 +95,7 @@ function Home({
     getUser();
   }, [user]);
 
-  const logoList = sortedStockDataList.map((data, index) => {
+  const logoList = sortedStockDataList.slice(0, 14).map((data, index) => {
     return <Logo key={index} stockJSON={data} />;
   });
 
@@ -104,9 +114,9 @@ function Home({
     );
   });
 
-  const topEightRenderedInvestorList = investorDataList
-    .slice(0, 8)
-    .map((investor) => {
+  const topTenRenderedInvestorList = investorDataList
+    .slice(0, 10)
+    .map((investor, index) => {
       return (
         <InvestorCard
           key={investor._id}
@@ -116,6 +126,8 @@ function Home({
           totalInvestment={investor.totalInvestment}
           totalProfits={investor.totalProfits}
           totalAssets={investor.totalAssets}
+          profitPercentageList={investor.percentList}
+          rank={index + 1}
         />
       );
     });
@@ -133,28 +145,26 @@ function Home({
   }
 
   return (
-    <IndexWrapper>
-      <SearchBar options={options} />
-
-      <div className='text' ref={stockRef}>
-        Analyses
+    <IndexWrapper postLength={postDataList.length}>
+      <div className='main-items'>
+        <div className='text' ref={stockRef}>
+          Let's find the next Tesla
+        </div>
+        <div className='stockList'>{logoList}</div>
+      </div>
+      <div className='main-items'>
+        <div className='text' ref={ideaRef}>
+          Investment Ideas
+        </div>
+        <div className='postList'>{postList}</div>
       </div>
 
-      <div className='stockList'>{logoList}</div>
-
-      <div className='text' ref={ideaRef}>
-        Ideas
+      <div className='main-items'>
+        <div className='text' ref={investorRef}>
+          Top Investors
+        </div>
+        <div className='investorList'>{topTenRenderedInvestorList}</div>
       </div>
-
-      <div className='postList'>{postList}</div>
-
-      <div className='text' ref={investorRef}>
-        {' '}
-        Investors{' '}
-      </div>
-
-      <div className='investorList'>{topEightRenderedInvestorList}</div>
-      <div></div>
     </IndexWrapper>
   );
 }
@@ -166,11 +176,8 @@ export async function getServerSideProps() {
   // getting all stocks available on UpArrow (a user at the landing page where all stocks are)
   const allStockDataList = allStockList.data;
 
-  const sortedStockDataList = allStockDataList.sort(function (stock1, stock2) {
-    stock1 = stock1.name.toLowerCase();
-    stock2 = stock2.name.toLowerCase();
-
-    return stock1 < stock2 ? -1 : stock1 > stock2 ? 1 : 0;
+  const sortedStockDataList = allStockDataList.sort((stock1, stock2) => {
+    return stock2.invest.length - stock1.invest.length;
   });
   // making all stock data in alphabetical order
 
@@ -193,23 +200,46 @@ export async function getServerSideProps() {
   );
   const investorDataList = investorList.data; // investorDataList gets user document of all users in UpArrow
 
-  investorDataList.sort(function (a, b) {
-    var x = a.totalProfitPercentage;
-    var y = b.totalProfitPercentage;
+  const investorProfitPercentageList = (
+    await Promise.all(
+      investorDataList.map((investor) =>
+        axios(
+          `http://localhost:4000/api/v1/user/${investor._id}/profit-percentage`
+        )
+      )
+    )
+  ).map(({ data }) => data);
+  const percentBindDataList = investorDataList.map((investor, index) => {
+    return {
+      ...investor,
+      percentList: investorProfitPercentageList[index],
+    };
+  });
+
+  percentBindDataList.sort(function (a, b) {
+    const x = a.totalProfits;
+    const y = b.totalProfits;
 
     if (x === 0 && y === 0) return 1 / y - 1 / x || 0;
     else return y - x;
   });
 
   return {
-    props: { sortedStockDataList, postDataList, investorDataList },
+    props: {
+      sortedStockDataList,
+      postDataList,
+      investorDataList: percentBindDataList,
+    },
   };
 }
 
 export default function MainPage(props) {
   return (
-    <MainLayout>
-      <Home {...props} />
-    </MainLayout>
+    <>
+      <Banner />
+      <MainLayout>
+        <Home {...props} />
+      </MainLayout>
+    </>
   );
 }

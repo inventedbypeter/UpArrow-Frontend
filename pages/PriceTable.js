@@ -1,4 +1,4 @@
-const PriceTable = ({ tickers, prices, setPricesData }) => {
+const PriceTable = ({ tickers, prices, setConfigData }) => {
   return (
     <table>
       <tbody>
@@ -10,9 +10,12 @@ const PriceTable = ({ tickers, prices, setPricesData }) => {
                 type='number'
                 value={price}
                 onChange={(e) => {
-                  setPricesData((originPrices) => ({
-                    ...originPrices,
-                    [tickers[index]]: e.target.valueAsNumber,
+                  setConfigData((config) => ({
+                    ...config,
+                    prices: {
+                      ...config.prices,
+                      [tickers[index]]: e.target.valueAsNumber,
+                    },
                   }));
                 }}
               />

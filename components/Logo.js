@@ -4,11 +4,11 @@ import { useRouter } from 'next/router';
 import styled from '@emotion/styled';
 
 const LogoBlock = styled.img`
-  width: 20rem;
-  height: 20rem;
+  width: 13.8rem;
+  height: 13.8rem;
   border: solid 0.1rem #dee0e3;
   box-shadow: 0rem 0rem 0.2rem #c4c7cc;
-  border-radius: 0.6rem;
+  border-radius: 999rem;
   cursor: pointer;
   :hover {
     border: 0.1rem solid gray;

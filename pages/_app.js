@@ -8,7 +8,7 @@ import { CacheProvider } from '@emotion/react';
 import theme from '../src/theme';
 import createEmotionCache from '../src/createEmotionCache';
 import Script from 'next/script';
-import Navbar from '../components/Navbar';
+import Navbar, { navbarHeight } from '../components/Navbar';
 import {
   Hydrate,
   QueryClient,
@@ -19,8 +19,9 @@ import styled from '@emotion/styled';
 const clientSideEmotionCache = createEmotionCache();
 
 const ComponentWrapper = styled.div`
-  margin-top: 7.6rem;
+  margin-top: ${navbarHeight};
 `;
+
 function MyApp({
   Component,
   pageProps,

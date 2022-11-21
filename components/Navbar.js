@@ -7,7 +7,10 @@ import axios from 'axios';
 // import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileIcon from './ProfileIcon';
 import { useQuery } from '@tanstack/react-query';
+import { UpArrowLogo } from './icons';
+import { HeadH6Bold } from '../styles/typography';
 
+export const navbarHeight = '7.8rem';
 const NavBlock = styled.div`
   display: flex;
   background-color: white;
@@ -22,7 +25,8 @@ const NavBlock = styled.div`
   left: 0;
   z-index: 100;
   box-shadow: 0rem 0rem 0.7rem #c4c7cc;
-  padding: 1.3rem 2rem;
+  padding: 1.3rem 3.2rem;
+  height: ${navbarHeight};
 
   .left-items {
     display: flex;
@@ -30,29 +34,21 @@ const NavBlock = styled.div`
   }
 
   .uparrow-logo {
-    /* margin-left: 2rem; */
-    margin-right: 4rem;
-    font-size: 3rem;
     cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.9rem 2.4rem;
+    margin-right: 2.4rem;
   }
 
   .buttons {
     display: flex;
-  }
-
-  .stocks {
-    margin-right: 2.9rem;
+    ${HeadH6Bold}
     cursor: pointer;
-  }
-
-  .ideas {
-    margin-right: 2.9rem;
-    cursor: pointer;
-  }
-
-  .investors {
-    margin-right: auto;
-    cursor: pointer;
+    & > div {
+      padding: 2rem 2.4rem;
+    }
   }
 
   .right-items {
@@ -180,7 +176,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
     <NavBlock>
       <div className='left-items'>
         <div className='uparrow-logo' onClick={goToIndex}>
-          UpArrow
+          <UpArrowLogo />
         </div>
 
         <div className='buttons'>

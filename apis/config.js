@@ -7,7 +7,7 @@ const config = {
       .then((res) => res.data),
   put: (data) => () =>
     axios
-      .put(`${process.env.NEXT_PUBLIC_SERVER_URL}/config`, { data })
+      .put(`${process.env.NEXT_PUBLIC_SERVER_URL}/config`, data)
       .then((res) => res.data),
 };
 
