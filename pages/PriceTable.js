@@ -1,4 +1,10 @@
-const PriceTable = ({ tickers, prices, setConfigData }) => {
+const ObjectTable = ({
+  tickers,
+  prices,
+  setConfigData,
+  type = 'number',
+  property,
+}) => {
   return (
     <table>
       <tbody>
@@ -7,14 +13,17 @@ const PriceTable = ({ tickers, prices, setConfigData }) => {
             <td>{tickers[index]}</td>
             <td>
               <input
-                type='number'
+                type={type}
                 value={price}
                 onChange={(e) => {
                   setConfigData((config) => ({
                     ...config,
-                    prices: {
-                      ...config.prices,
-                      [tickers[index]]: e.target.valueAsNumber,
+                    [property]: {
+                      ...config[property],
+                      [tickers[index]]:
+                        type === 'number'
+                          ? e.target.valueAsNumber
+                          : e.target.value,
                     },
                   }));
                 }}
@@ -27,4 +36,4 @@ const PriceTable = ({ tickers, prices, setConfigData }) => {
   );
 };
 
-export default PriceTable;
+export default ObjectTable;

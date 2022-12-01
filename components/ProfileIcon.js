@@ -1,6 +1,7 @@
 import styled from '@emotion/styled';
 import { useState } from 'react';
 import { useRouter } from 'next/router';
+import { EmptyAvatar } from './icons';
 
 const ProfileIconWrapper = styled.div`
   position: relative;
@@ -30,6 +31,10 @@ const ProfileIconWrapper = styled.div`
     height: 6rem;
     border: 1px solid black;
     border-radius: 9999rem;
+
+    &.no-border {
+      border: none;
+    }
   }
 `;
 
@@ -64,11 +69,9 @@ const ProfileIcon = ({ className, data }) => {
             onClick={() => setIsOpen(!isOpen)}
           />
         ) : (
-          // <AccountCircleIcon
-          //   sx={{ fontSize: 40 }}
-          //   onClick={() => setIsOpen(!isOpen)}
-          // />
-          <div>CircleIcon</div>
+          <div className='profile-icon no-border'>
+            <EmptyAvatar onClick={() => setIsOpen(!isOpen)} />
+          </div>
         )}
 
         {isOpen && (

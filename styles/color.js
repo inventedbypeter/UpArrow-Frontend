@@ -10,4 +10,5 @@ export default {
   B96: '#F5F5F5',
   AGREE_GREEN: '#26BF51',
   DISAGREE_RED: '#FF333F',
+  UpArrow_Blue: '#3D67FF',
 };

@@ -23,5 +23,5 @@ export const useConfig = () => {
     getConfig();
   }, []);
 
-  return { config, loading };
+  return { config, loading, getConfig };
 };

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import BioCard from '../components/BioCard';
 import PurchaseCard from '../components/PurchaseCard';
 import axios from 'axios';
-import { useRouter } from 'next/router';
 import styled from '@emotion/styled';
 import { useConfig } from '../hooks/useConfig';
 

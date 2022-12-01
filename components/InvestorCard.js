@@ -109,10 +109,7 @@ const InvestorCard = ({
 
   const seeInvestor = () => {
     if (user) {
-      localStorage.setItem('userTokenEmail', user.email);
-      var investorStrId = String(investorId);
-      localStorage.setItem('investorStrId', investorStrId);
-      router.push('/investor');
+      router.push(`/investor/${investorId}`);
     } else {
       router.push('/api/auth/login');
     }
