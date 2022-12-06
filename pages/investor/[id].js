@@ -22,9 +22,10 @@ const InvestorDataBlock = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
+  flex-direction: column;
   margin-top: 1.8rem;
 
-  .title {
+  .investor-title {
     ${HeadH3Bold}
     margin-bottom: 2.4rem;
   }
@@ -33,10 +34,13 @@ const InvestorDataBlock = styled.div`
     width: 100%;
     margin-bottom: 2rem;
     border-bottom: 0.1rem solid ${color.B93};
+    padding: 3.2rem;
     .stocks {
       display: flex;
       flex-wrap: wrap;
       gap: 0.8rem;
+
+      margin-bottom: 2.4rem;
 
       .stock {
         border: 0.1rem solid ${color.B93};
@@ -46,8 +50,6 @@ const InvestorDataBlock = styled.div`
         display: flex;
         gap: 1.6rem;
         align-items: center;
-
-        margin-bottom: 2.4rem;
 
         .stock-logo {
           width: 7.2rem;
@@ -74,23 +76,32 @@ const InvestorDataBlock = styled.div`
         }
       }
     }
+  }
+  .rank {
+    font-size: 2rema;
+  }
 
-    .view-all {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      ${HeadH6Bold}
-      border: 0.1rem solid ${color.B80};
-      border-radius: 0.4rem;
-      height: 4.4rem;
-    }
+  .view-all {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    ${HeadH6Bold}
+    border: 0.1rem solid ${color.B80};
+    border-radius: 0.4rem;
+    height: 4.4rem;
+  }
+
+  .ideas-wrapper {
+    width: 100%;
+    margin-bottom: 2rem;
+    padding: 3.2rem;
   }
 `;
 
 // -> 한 함수 / 모듈 / 는 한가지 일만 해야한다.  clean code
 // Investor : Investor 페이지를 보여주는 일 // 다른 기능들은 다른 파일에서 .
 
-export default function Investor({ investor, stocksWithPrices }) {
+export default function Investor({ investor, stocksWithPrices, rank }) {
   const {
     comments,
     description,
@@ -128,10 +139,11 @@ export default function Investor({ investor, stocksWithPrices }) {
         totalInvestment={totalInvestment}
         totalProfits={totalProfits}
         totalAssets={totalAssets}
+        rank={rank}
       />
       <InvestorDataBlock>
         <div className='portfolio-wrapper'>
-          <div className='title'>{username}'s Portfolio</div>
+          <div className='investor-title'>{username}'s Portfolio</div>
           <div className='stocks'>
             {stocksWithPrices.map((company) => (
               <div className='stock'>
@@ -149,21 +161,21 @@ export default function Investor({ investor, stocksWithPrices }) {
             ))}
           </div>
           <div className='view-all'>View All</div>
+        </div>
+        <div className='ideas-wrapper'>
           <div>
-            <div>Warren Buffett's Ideas</div>
-            {Array(4)
-              .fill(0)
-              .map(() => (
-                <PostCard
-                  theme={'test'}
-                  postId={'test'}
-                  postImage={'tset'}
-                  postTitle={'test'}
-                  postAuthor={'test'}
-                  postDate={new Date()}
-                  stockId={'test'}
-                />
-              ))}
+            <div className='investor-title'>{username}'s Ideas</div>
+            {posts.map((post) => (
+              <PostCard
+                theme={'none'}
+                postId={post._id}
+                postImage={post.image_url}
+                postTitle={post.title}
+                postAuthor={post.userName}
+                postDate={new Date()}
+                stockId={post.stockId}
+              />
+            ))}
           </div>
           <div className='view-all'>View All</div>
         </div>
@@ -188,7 +200,6 @@ export async function getServerSideProps(context) {
   const prices = (
     await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/config`)
   ).data.prices;
-  console.log('prices:  ', prices);
 
   const stockPurchaseInfos = purchases.reduce((acc, purchase) => {
     if (acc[purchase.stockId]) {
@@ -229,10 +240,22 @@ export async function getServerSideProps(context) {
     };
   });
 
+  const userPosts = (
+    await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/post/${id}/userId`)
+  ).data;
+
+  const userRank = (
+    await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/${id}/rank`)
+  ).data.rank;
+
   return {
     props: {
-      investor: investor.data,
+      investor: {
+        ...investor.data,
+        posts: userPosts,
+      },
       stocksWithPrices,
+      rank: userRank,
     },
   };
 }

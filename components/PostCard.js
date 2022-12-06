@@ -16,6 +16,7 @@ const timeAgo = new TimeAgo('en-US');
 const PostWrapper = styled.div`
   cursor: pointer;
   display: flex;
+  align-items: center;
   width: 59rem;
   gap: 2rem;
   cursor: pointer;

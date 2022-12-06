@@ -1,12 +1,13 @@
 import { Editor } from '@toast-ui/react-editor';
 import { forwardRef, useEffect, useRef } from 'react';
 
-const ToastEditor = ({ content, setPostForm }) => {
+const ToastEditor = ({ content, setPostForm, placeholder }) => {
   const editorRef = useRef();
   return (
     <>
       <Editor
         initialValue={content}
+        placeholder={placeholder}
         onChange={() => {
           setPostForm((s) => ({
             ...s,
@@ -14,8 +15,8 @@ const ToastEditor = ({ content, setPostForm }) => {
           }));
         }}
         previewStyle='vertical'
-        height='600px'
-        initialEditType='markdown'
+        height='1000px'
+        initialEditType='wysiwyg'
         useCommandShortcut={true}
         ref={editorRef}
       />

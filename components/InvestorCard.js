@@ -115,7 +115,6 @@ const InvestorCard = ({
     }
   };
 
-  console.log('investorAvatar : ', investorAvatar);
   return (
     <InvestorCardWrapper
       onClick={() => seeInvestor()}

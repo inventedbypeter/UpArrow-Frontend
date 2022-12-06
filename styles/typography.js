@@ -43,6 +43,12 @@ export const HeadH6Bold = css`
   font-weight: 600;
 `;
 
+export const Body16Regular = css`
+  line-height: 2.2rem;
+  font-size: 1.6rem;
+  font-weight: 400;
+`;
+
 export const Body14Regular = css`
   line-height: 1.8rem;
   font-size: 1.4rem;

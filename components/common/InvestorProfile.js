@@ -1,5 +1,6 @@
 import styled from '@emotion/styled';
 import { numberComma } from '../../utils/number';
+import Rank from './Rank';
 import Avatar from './Avatar';
 import {
   Body14Regular,
@@ -10,6 +11,7 @@ import {
 import color from '../../styles/color';
 
 const InvestorProfileBlock = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -115,9 +117,11 @@ const InvestorProfile = ({
   totalInvestment,
   totalAssets,
   totalProfits,
+  rank,
 }) => {
   return (
     <InvestorProfileBlock>
+      <Rank rank={rank} />
       <Avatar className='avatar' src={profile_image_url} />
       <div className='name'>{username}</div>
       <button className='follow-btn'>Follow</button>
