@@ -10,21 +10,28 @@ const TagPillBlock = styled.div`
   ${Body16Regular}
   gap:0.8rem;
   padding: 0.8rem;
-  padding-left: 1.6rem;
   border: 0.1rem solid ${color.B80};
-  height: 3.8rem;
+  height: 4.8rem;
   border-radius: 12rem;
+
+  & > img {
+    width: 3.2rem;
+    height: 3.2rem;
+    border-radius: 999rem;
+    border: 0.1rem solid rgba(0 0 0 / 20%);
+  }
 
   .x-icon {
     cursor: pointer;
   }
 `;
 
-const TagPill = ({ label, clean }) => {
+const TagPill = ({ label, clean, stockImageUrl }) => {
   return (
     <TagPillBlock>
+      <img src={stockImageUrl} />
       <span>{label}</span>
-      <XIcon className='x-icon' onClick={() => clean()} />
+      {clean && <XIcon className='x-icon' onClick={() => clean()} />}
     </TagPillBlock>
   );
 };

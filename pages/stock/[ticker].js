@@ -13,6 +13,7 @@ import Management from '../../components/Management';
 import Financial from '../../components/Financial';
 import UserIcon from '../../components/UserIcon';
 import { useRouter } from 'next/router';
+import CommentInput from '../../components/CommentInput';
 
 const CommentInputBlock = styled.div`
   padding: 4rem;
@@ -82,12 +83,12 @@ export default function Stock({ stockData }) {
   const [userId, setUserId] = useState('');
   const [stock, setStock] = useState(null);
   const [filteredStock, setFilteredStock] = useState(null);
-  const commentInputRef = useRef();
   const { user, error, isLoading } = useUser();
   const [openInvest, setOpenInvest] = useState(false);
   const [openNotInvest, setOpenNotInvest] = useState(false);
   const [analysis, setAnalysis] = useState(null);
   const [investors, setInvestors] = useState([]);
+  const [comment, setComment] = useState('');
 
   var token = null;
 
@@ -193,7 +194,7 @@ export default function Stock({ stockData }) {
   }
 
   const submitComment = async () => {
-    if (commentInputRef.current.value && stock && user) {
+    if (comment && stock && user) {
       const response = await fetch(
         `http://localhost:4000/api/v1/user/${user.email}/email`
       );
@@ -205,7 +206,7 @@ export default function Stock({ stockData }) {
       const commentJSON = {
         stockId: String(stock._id),
         userId: String(data._id),
-        content: commentInputRef.current.value,
+        content: comment,
         timeStamp: timeStamp,
         likes: [],
       };
@@ -216,7 +217,7 @@ export default function Stock({ stockData }) {
       } catch (e) {
         console.error('e : ', e);
       } finally {
-        commentInputRef.current.value = '';
+        setComment('');
       }
     }
   };
@@ -350,12 +351,10 @@ export default function Stock({ stockData }) {
         })}
 
         <Analyses title='Comment'>
-          <CommentInputBlock>
-            <input className='comment-input' ref={commentInputRef} />
-            <button className='comment-submit-btn' onClick={submitComment}>
-              Submit
-            </button>
-          </CommentInputBlock>
+          <CommentInput value={comment} setValue={setComment} />
+          <button className='comment-submit-btn' onClick={submitComment}>
+            Submit
+          </button>
         </Analyses>
         <div className='buy-sale-btn-group'>
           <Buy stockJSON={stock} />

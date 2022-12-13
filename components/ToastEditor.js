@@ -1,10 +1,17 @@
+import styled from '@emotion/styled';
 import { Editor } from '@toast-ui/react-editor';
-import { forwardRef, useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
+const ToastEditorBlock = styled.div`
+  .toastui-editor-contents {
+    font-size: 1.2rem;
+    font-family: 'Pretendard';
+  }
+`;
 const ToastEditor = ({ content, setPostForm, placeholder }) => {
   const editorRef = useRef();
   return (
-    <>
+    <ToastEditorBlock>
       <Editor
         initialValue={content}
         placeholder={placeholder}
@@ -20,7 +27,7 @@ const ToastEditor = ({ content, setPostForm, placeholder }) => {
         useCommandShortcut={true}
         ref={editorRef}
       />
-    </>
+    </ToastEditorBlock>
   );
 };
 

@@ -4,6 +4,7 @@ import PostCard from '../../components/PostCard';
 
 import axios from 'axios';
 import { numberComma } from '../../utils/number';
+import { getInvestorProfileInfo } from '../../utils/investor';
 import InvestorProfile from '../../components/common/InvestorProfile';
 import {
   Body14Medium,
@@ -124,7 +125,6 @@ export default function Investor({ investor, stocksWithPrices, rank }) {
     _id,
   } = investor;
 
-  const availableCash = totalAssets - totalInvestment;
   return (
     <InvestorBlock>
       <InvestorProfile
@@ -186,44 +186,11 @@ export default function Investor({ investor, stocksWithPrices, rank }) {
 
 export async function getServerSideProps(context) {
   const { id } = context.params;
-  const investor = await axios.get(
-    `${process.env.NEXT_PUBLIC_SERVER_URL}/user/${id}`
-  );
-  const purchaseIds = investor.data.purchases;
-  const purchases = (
-    await Promise.all(
-      purchaseIds?.map((id) =>
-        axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/purchase/${id}`)
-      )
-    )
-  ).map((v) => v.data);
-  const prices = (
-    await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/config`)
-  ).data.prices;
-
-  const stockPurchaseInfos = purchases.reduce((acc, purchase) => {
-    if (acc[purchase.stockId]) {
-      return {
-        ...acc,
-        [acc[purchase.stockId]]: {
-          ...acc[purchase.stockId],
-          id: purchase.stockId,
-          quantity: acc[purchase.stockId].quantity + purchase.quantity,
-          averagePrice:
-            acc[purchase.stockId].averagePrice + purchase.averagePrice,
-        },
-      };
-    }
-    return {
-      ...acc,
-      [purchase.stockId]: {
-        id: purchase.stockId,
-        quantity: purchase.quantity,
-      },
-    };
-  }, {});
+  const { investor, prices, stockPurchaseInfos, userPosts, userRank } =
+    await getInvestorProfileInfo(id);
 
   const stockIds = Object.keys(stockPurchaseInfos);
+
   const stocks = (
     await Promise.all(
       stockIds.map((id) =>
@@ -239,14 +206,6 @@ export async function getServerSideProps(context) {
       totalValue: stockPurchaseInfos[stock._id].quantity * prices[stock.ticker],
     };
   });
-
-  const userPosts = (
-    await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/post/${id}/userId`)
-  ).data;
-
-  const userRank = (
-    await axios.get(`${process.env.NEXT_PUBLIC_SERVER_URL}/user/${id}/rank`)
-  ).data.rank;
 
   return {
     props: {

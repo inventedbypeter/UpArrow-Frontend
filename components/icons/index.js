@@ -6,3 +6,4 @@ export { default as NextIcon } from './Next.svg';
 export { default as EmptyAvatar } from './EmptyAvatar.svg';
 export { default as XIcon } from './X.svg';
 export { default as PlusIcon } from './Plus.svg';
+export { default as ImageIcon } from './Image.svg';

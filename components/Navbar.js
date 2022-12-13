@@ -9,6 +9,7 @@ import ProfileIcon from './ProfileIcon';
 import { useQuery } from '@tanstack/react-query';
 import { UpArrowLogo } from './icons';
 import { HeadH6Bold } from '../styles/typography';
+import { useAppUser } from '../hooks/useAppUser';
 
 export const navbarHeight = '7.8rem';
 const NavBlock = styled.div`
@@ -113,43 +114,9 @@ const NavBlock = styled.div`
 
 const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   const router = useRouter();
-  const { user, error, isLoading } = useUser();
-  const { data } = useQuery(['user', user], () =>
-    axios
-      .get(`http://localhost:4000/api/v1/user/${user.email}/email`)
-      .then((res) => res.data)
-  );
+  const { user } = useAppUser();
 
-  const [userDocument, setUserDocument] = useState(null);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const [userId, setUserId] = useState('placeholder');
-
-  //const [content, setContent] = useState("Please enter your comment");
-
-  const navigateProfile = () => {
-    if (userId.length > 0) {
-      router.push('/investor');
-    }
-  };
-
-  useEffect(() => {
-    const getUser = async () => {
-      if (user) {
-        const email = user.email;
-        const userResponse = await axios.get(
-          `http://localhost:4000/api/v1/user/${email}/email`
-        );
-        if (userResponse.data.isAdmin) {
-          setUserId(String(userResponse.data._id));
-          localStorage.setItem('investorStrId', String(userResponse.data._id));
-          setIsAdmin(true);
-        } else {
-          localStorage.setItem('investorStrId', String(userResponse.data._id));
-        }
-      }
-    };
-    getUser();
-  }, [user]);
+  const isAdmin = user?.isAdmin;
 
   const goToIndex = () => {
     router.push('/');
@@ -168,7 +135,6 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   };
 
   const goToAdminPage = () => {
-    localStorage.setItem('adminUserId', userId);
     router.push('/admin');
   };
 
@@ -203,7 +169,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
       </div>
 
       <div className='right-items'>
-        <ProfileIcon data={data} />
+        <ProfileIcon data={user} />
       </div>
     </NavBlock>
   );

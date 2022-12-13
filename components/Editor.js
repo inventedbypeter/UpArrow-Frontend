@@ -12,6 +12,9 @@ import color from '../styles/color';
 import SearchInput from './common/SearchInput';
 import TagPill from './Editor/TagPill';
 import { PlusIcon } from './icons';
+import ImageUploader from './ImageUploader';
+import VideoUploader from './VideoUploader';
+import { useRouter } from 'next/router';
 
 const EditorBlock = styled.div`
   display: flex;
@@ -20,6 +23,18 @@ const EditorBlock = styled.div`
 const ToastEditor = dynamic(() => import('../components/ToastEditor'), {
   ssr: false,
 });
+
+const SubmitBtn = styled.button`
+  background-color: ${color.UpArrow_Blue};
+  width: 8rem;
+  height: 4rem;
+  border: none;
+  border-radius: 0.8rem;
+  color: white;
+  cursor: pointer;
+  margin-left: auto;
+  margin-top: 1.6rem;
+`;
 
 const InputWrapper = styled.div`
   display: flex;
@@ -44,16 +59,18 @@ const InputWrapper = styled.div`
   .stock-search-wrapper {
     padding: 0.8rem 0;
     display: flex;
+    margin-bottom: 1.2rem;
     flex-direction: column;
 
     .empty {
       flex: 1;
     }
   }
+
   .stock-search-label {
     margin-bottom: 0.8rem;
     ${Body12Medium}
-    color: ${color.B80};
+    color: #999999;
   }
 
   .stock-search {
@@ -94,27 +111,37 @@ const InputWrapper = styled.div`
       justify-content: center;
       align-items: center;
       cursor: pointer;
-      width: 3.8rem;
-      height: 3.8rem;
+      width: 4.8rem;
+      height: 4.8rem;
     }
+  }
+  .stock-with-search-input {
+    position: relative;
+  }
 
-    .stock-with-search-input {
-      position: relative;
-    }
+  .stock-image-input {
+    display: flex;
+    flex-direction: column;
   }
 `;
 
 const Editor = ({ editData }) => {
   const { data: stocks } = useQuery(['stock'], api.stock.get);
   const { user } = useUser();
+  // https://www.youtube.com/watch?v=fzEcKYFmQxM ex video url
+  const [videoUrl, setVideoUrl] = useState('');
   const [postForm, setPostForm] = useState(
     editData || { title: '', content: '', thumbnailImageUrl: '', stockId: '' }
   );
+  const router = useRouter();
 
   const [stockTextForSearch, setStockTextForSearch] = useState('');
   const [stockSearchResult, setStockSearchResult] = useState([]);
   const [selectedStocks, setSelectedStocks] = useState([]);
-  const [searchModalOpen, setSearchModalOpen] = useState(false);
+  const [searchModalOpen, setSearchModalOpen] = useState(true);
+  const [file, setFile] = useState();
+
+  const titleInputRef = useRef();
 
   useEffect(() => {
     if (stockTextForSearch.length === 0) return;
@@ -131,18 +158,39 @@ const Editor = ({ editData }) => {
     search();
   }, [stockTextForSearch]);
 
-  const submit = () => {
+  useEffect(() => {
+    setTimeout(() => {
+      titleInputRef.current.focus();
+    }, 300);
+  }, []);
+
+  const submit = async () => {
+    if (!file) return;
+    const formData = new FormData();
+    formData.append('image', file.file);
+    const { link } = (
+      await axios.post(`${env.serverUrl}/file/upload`, formData)
+    ).data;
+    const splitedVideoUrl = videoUrl?.split('=')?.[1];
+    const payload = {
+      ...postForm,
+      stockIds: selectedStocks.map(({ _id }) => _id),
+      email: user.email,
+      thumbnailImageUrl: link,
+      youtubeCode: splitedVideoUrl || null,
+    };
+
+    let result;
     if (editData) {
-      axios.put(`${env.serverUrl}/post/${editData._id}`, {
-        ...postForm,
-        email: user.email,
-      });
+      result = await axios.put(
+        `${env.serverUrl}/post/${editData._id}`,
+        payload
+      );
     } else {
-      axios.post(env.serverUrl + '/post', {
-        ...postForm,
-        email: user.email,
-      });
+      result = await axios.post(env.serverUrl + '/post', payload);
     }
+
+    router.push(`/ideas/${result.data.data._id}`);
   };
 
   return (
@@ -154,16 +202,9 @@ const Editor = ({ editData }) => {
           onChange={(e) =>
             setPostForm((s) => ({ ...s, title: e.target.value }))
           }
+          ref={titleInputRef}
           placeholder='Title Here'
         />
-        {/* <input
-          value={postForm.thumbnailImageUrl}
-          type='file'
-          onChange={(e) =>
-            setPostForm((s) => ({ ...s, thumbnailImageUrl: e.target.value }))
-          }
-          placeholder='thumbnail image url'
-        /> */}
         <div className='stock-search-wrapper'>
           <span className='stock-search-label'>
             What stocks are you writing about?
@@ -173,6 +214,7 @@ const Editor = ({ editData }) => {
               <TagPill
                 key={stock._id}
                 label={stock.name}
+                stockImageUrl={stock.profile_image_url}
                 clean={() => {
                   setSelectedStocks((s) =>
                     s.filter((v) => v._id !== stock._id)
@@ -183,7 +225,7 @@ const Editor = ({ editData }) => {
             <div className='stock-with-search-input'>
               <button
                 className='stock-plus'
-                onClick={(e) => {
+                onClick={() => {
                   setSearchModalOpen(true);
                 }}
               >
@@ -204,10 +246,24 @@ const Editor = ({ editData }) => {
                 onSelect={(v) => {
                   if (selectedStocks.some((s) => s._id === v._id)) return;
                   setSelectedStocks((s) => [...s, v]);
+                  setSearchModalOpen(false);
+                  setStockTextForSearch('');
                 }}
               />
             </div>
           </div>
+        </div>
+        <div className='stock-image-input'>
+          <span className='stock-search-label'>
+            Upload the thumbnail image of your ideas
+          </span>
+          <ImageUploader id='image' file={file} setFile={setFile} />
+        </div>
+        <div className='stock-image-input'>
+          <span className='stock-search-label'>
+            Do you have any video URL to support your ideas?
+          </span>
+          <VideoUploader url={videoUrl} setUrl={setVideoUrl} />
         </div>
 
         <ToastEditor
@@ -215,6 +271,7 @@ const Editor = ({ editData }) => {
           content={postForm.content}
           setPostForm={setPostForm}
         />
+        <SubmitBtn onClick={() => submit()}>Post</SubmitBtn>
       </InputWrapper>
     </EditorBlock>
   );
