@@ -1,6 +1,5 @@
-import React, { useEffect, useState, Fragment } from 'react';
-import FavoriteBorder from '@mui/icons-material/FavoriteBorder';
-import Favorite from '@mui/icons-material/Favorite';
+import React, { useEffect, useState } from 'react';
+import { ThumbUpIcon } from '../components/icons';
 import { useUser } from '@auth0/nextjs-auth0';
 import './Comment.module.css';
 import axios from 'axios';
@@ -8,6 +7,9 @@ import styled from '@emotion/styled';
 import UserIcon from './UserIcon';
 import TimeAgo from 'javascript-time-ago';
 import en from 'javascript-time-ago/locale/en';
+import { Body14Medium, Body16Regular, HeadH6Bold } from '../styles/typography';
+import color from '../styles/color';
+
 TimeAgo.addDefaultLocale(en);
 const timeAgo = new TimeAgo('en-US');
 
@@ -20,41 +22,93 @@ const CommentBlock = styled.div`
     display: flex;
   }
 
-  .picture {
+  .picture-wrapper {
     margin-right: 3rem;
+
+    .picture {
+      width: 6rem;
+      height: 6rem;
+    }
   }
 
-  .userInfo {
+  .content {
     display: flex;
     flex-direction: column;
+    margin-right: 1.6rem;
+  }
+
+  .user-info {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.6rem;
   }
 
   .comment-name {
-    font-weight: bold;
-    font-size: 2.8rem;
+    margin-right: 1.6rem;
+    ${HeadH6Bold}
   }
 
   .comment-content {
-    font-size: 2.4rem;
+    ${Body16Regular}
   }
 
   .comment-time {
-    font-size: 2.4rem;
+    ${Body14Medium}
+    color: ${color.B53}
   }
 
-  .heart {
+  .thumb-up {
     display: flex;
     align-items: center;
     margin-right: 1rem;
+    padding: 2.4rem;
+    cursor: pointer;
 
     svg {
-      width: 4rem;
-      height: 4rem;
+      width: 2rem;
+      height: 2rem;
     }
   }
 `;
 
-const Comment = ({ commentJSON }) => {
+const CommentView = ({
+  imageUrl,
+  username,
+  content,
+  createdAt,
+  likeCount,
+  checked,
+  onHeartClick,
+}) => {
+  return (
+    <CommentBlock>
+      <div className='profile'>
+        <div className='picture-wrapper'>
+          <UserIcon className='picture' src={imageUrl} />
+        </div>
+        <div className='content'>
+          <div className='user-info'>
+            <div className='comment-name'>{username}</div>
+            <div className='comment-time'>
+              {timeAgo.format(new Date(createdAt))} · {likeCount} Likes
+            </div>
+          </div>
+          <div className='comment-content'>{content}</div>
+        </div>
+      </div>
+
+      <div className='thumb-up' onClick={onHeartClick}>
+        {checked ? (
+          <ThumbUpIcon />
+        ) : (
+          <ThumbUpIcon style={{ fill: color.B40 }} />
+        )}
+      </div>
+    </CommentBlock>
+  );
+};
+
+const Comment = ({ comment: comment }) => {
   const [username, setUsername] = useState('');
   const [investorProfilePicture, setInvestorProfilePicture] = useState('');
   const [likes, setLikes] = useState(0);
@@ -66,17 +120,17 @@ const Comment = ({ commentJSON }) => {
   const handleChange = (event) => {
     if (checked == false) {
       setChecked(true);
-      setLikes(commentJSON.likes.length);
+      setLikes(comment.likes.length);
     } else {
       setChecked(false);
-      setLikes(commentJSON.likes.length);
+      setLikes(comment.likes.length);
     }
   };
 
   useEffect(() => {
     const email = localStorage.getItem('email');
     const getUser = async () => {
-      const likesList = commentJSON.likes;
+      const likesList = comment.likes;
 
       var userResponse = await fetch(
         `http://localhost:4000/api/v1/user/${email}/email`
@@ -94,15 +148,15 @@ const Comment = ({ commentJSON }) => {
       }
 
       if (isLiked == true) {
-        setLikes(commentJSON.likes.length);
+        setLikes(comment.likes.length);
         setChecked(true);
       } else {
-        setLikes(commentJSON.likes.length);
+        setLikes(comment.likes.length);
         setChecked(false);
       }
 
       const response = await fetch(
-        `http://localhost:4000/api/v1/user/${commentJSON.userId}`
+        `http://localhost:4000/api/v1/user/${comment.userId}`
       );
       const data = await response.json();
       setUsername(data.username);
@@ -112,7 +166,7 @@ const Comment = ({ commentJSON }) => {
   }, []);
 
   const callLikesApi = async () => {
-    const commentId = String(commentJSON._id);
+    const commentId = String(comment._id);
 
     var userResponse = await fetch(
       `http://localhost:4000/api/v1/user/${user.email}/email`
@@ -138,34 +192,21 @@ const Comment = ({ commentJSON }) => {
     }
   };
 
+  const onHeartClick = () => {
+    handleChange();
+    callLikesApi();
+  };
+
   return (
-    <CommentBlock>
-      <div className='profile'>
-        <div className='picture'>
-          <UserIcon src={investorProfilePicture}></UserIcon>
-        </div>
-
-        <div className='userInfo'>
-          <div className='comment-name'>{username}</div>
-
-          <div className='comment-content'>{commentJSON.content}</div>
-
-          <div className='comment-time'>
-            {timeAgo.format(new Date(commentJSON.timeStamp))} | {likes} Likes
-          </div>
-        </div>
-      </div>
-
-      <div
-        className='heart'
-        onClick={() => {
-          handleChange();
-          callLikesApi();
-        }}
-      >
-        {checked ? <Favorite /> : <FavoriteBorder />}
-      </div>
-    </CommentBlock>
+    <CommentView
+      imageUrl={investorProfilePicture}
+      username={username}
+      content={comment.content}
+      createdAt={comment.createdAt}
+      likeCount={likes}
+      onHeartClick={onHeartClick}
+      checked={checked}
+    />
   );
 };
 

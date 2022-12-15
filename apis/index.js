@@ -3,6 +3,7 @@ import stock from './stock';
 import post from './post';
 import vote from './vote';
 import user from './user';
+import comment from './comment';
 
 const api = {
   config,
@@ -10,6 +11,7 @@ const api = {
   post,
   vote,
   user,
+  comment,
 };
 
 export default api;

@@ -200,14 +200,10 @@ export default function Stock({ stockData }) {
       );
       const data = await response.json();
 
-      const now = new Date();
-      const timeStamp = date.format(now, 'YYYY/MM/DD HH:mm:ss');
-
       const commentJSON = {
         stockId: String(stock._id),
         userId: String(data._id),
         content: comment,
-        timeStamp: timeStamp,
         likes: [],
       };
 

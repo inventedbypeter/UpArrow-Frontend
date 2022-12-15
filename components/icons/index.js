@@ -7,3 +7,4 @@ export { default as EmptyAvatar } from './EmptyAvatar.svg';
 export { default as XIcon } from './X.svg';
 export { default as PlusIcon } from './Plus.svg';
 export { default as ImageIcon } from './Image.svg';
+export { default as CommentIcon } from './Comment.svg';

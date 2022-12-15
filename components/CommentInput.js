@@ -17,6 +17,7 @@ const CommentInputBlock = styled.div`
     height: 4.8rem;
     border-radius: 99rem;
     margin-right: 1.6rem;
+    object-fit: cover;
   }
 
   & > textarea {
@@ -45,7 +46,13 @@ const CommentInput = (props) => {
   return <CommentInputView userUrl={user?.profile_image_url} {...props} />;
 };
 
-const CommentInputView = ({ userUrl, value, setValue, ...props }) => {
+const CommentInputView = ({
+  userUrl,
+  value,
+  setValue,
+  commentInputRef,
+  ...props
+}) => {
   return (
     <CommentInputBlock {...props}>
       <img src={userUrl} />
@@ -53,6 +60,7 @@ const CommentInputView = ({ userUrl, value, setValue, ...props }) => {
         placeholder='Add Comments..'
         value={value}
         onChange={(e) => setValue(e.target.value)}
+        ref={commentInputRef}
       />
     </CommentInputBlock>
   );

@@ -10,18 +10,9 @@ const VoteBlock = styled.div`
 `;
 
 const Vote = ({ userId, postId, refetch }) => {
-  const createVote = useMutation(api.vote.post, { onSuccess: () => refetch() });
-  const voteData = { userId, postId };
-
   return (
     <VoteBlock>
-      <button
-        onClick={() => {
-          createVote.mutate({ ...voteData, isAgree: true });
-        }}
-      >
-        Agree
-      </button>
+      <button>Agree</button>
       <button
         onClick={() => {
           createVote.mutate({ ...voteData, isAgree: false });

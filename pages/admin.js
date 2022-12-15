@@ -29,8 +29,6 @@ export default function Admin() {
   const boardKeys = parsedBoardList.map((board) => board[0]);
   const boardValues = parsedBoardList.map((board) => board[1]);
 
-  console.log('data : ', data);
-
   return (
     <AdminBlock>
       <select>
