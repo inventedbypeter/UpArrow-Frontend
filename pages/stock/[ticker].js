@@ -3,47 +3,30 @@ import Comment from '../../components/Comment';
 import { useUser } from '@auth0/nextjs-auth0';
 import axios from 'axios';
 import styled from '@emotion/styled';
-import date from 'date-and-time';
 import Buy from '../../components/Buy';
 import StockCover from '../../components/StockCover';
 import StockChart from '../../components/StockChart';
 import Analyses from '../../components/Analysis';
 import StarRating from '../../components/StarRating';
 import Management from '../../components/Management';
-import Financial from '../../components/Financial';
+import Financials from '../../components/Financials';
 import UserIcon from '../../components/UserIcon';
 import { useRouter } from 'next/router';
 import CommentInput from '../../components/CommentInput';
-
-const CommentInputBlock = styled.div`
-  padding: 4rem;
-  padding-bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-
-  .comment-input {
-    width: 100%;
-    height: 6rem;
-    margin-bottom: 2rem;
-  }
-
-  .comment-submit-btn {
-    border: none;
-    padding: 2rem 4rem;
-    font-size: 2rem;
-    font-weight: bold;
-  }
-`;
-
-const CommentsBlock = styled.div`
-  border: solid 0.1rem #dee0e3;
-  box-shadow: 0rem 0.2rem #c4c7cc;
-  margin-left: 2rem;
-  margin-right: 2rem;
-`;
+import InvestSimulatorIdeas from '../../components/Stock/InvestSimulatorIdeas';
+import Overview from '../../components/Stock/Overview';
 
 const StockWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+
+  .section {
+    margin-bottom: 3.2rem;
+  }
+  .stock-content {
+    max-width: 128rem;
+  }
+
   .content {
     padding: 0 3rem;
 
@@ -75,6 +58,7 @@ const StockWrapper = styled.div`
 const Alert = React.forwardRef(function Alert(props, ref) {
   return <MuiAlert elevation={6} ref={ref} variant='filled' {...props} />;
 });
+let token;
 
 export default function Stock({ stockData }) {
   const { query } = useRouter();
@@ -89,8 +73,6 @@ export default function Stock({ stockData }) {
   const [analysis, setAnalysis] = useState(null);
   const [investors, setInvestors] = useState([]);
   const [comment, setComment] = useState('');
-
-  var token = null;
 
   const fetchInvestors = async () => {
     const investorIdList =
@@ -236,162 +218,139 @@ export default function Stock({ stockData }) {
 
   return (
     <StockWrapper>
-      <StockCover
-        stockImageUrl={stockImageUrl}
-        stockCoverImageUrl={coverImageUrl}
-        stockName={stockName}
-      />
-      <div className='content'>
-        <div>
-          <div>
-            <div variant='h5'>{starScore}</div>
-          </div>
-          <div>
-            {/* <Rating
-              precision={0.5}
-              name='simple-controlled'
-              value={starScore}
-              readOnly
-            /> */}
-          </div>
-        </div>
-        <StockChart stockChartUrl={stockChartUrl} />
-        {stock?.detailInfo?.map((detail) => {
-          if (detail.type === 'html') {
-            return (
-              <Analyses
-                key={detail.title}
-                title={detail.title}
-                type={detail.type}
-              >
-                {detail.content}
-              </Analyses>
-            );
-          }
-          if (detail.type === 'ratingList') {
-            return (
-              <Analyses
-                key={detail.title}
-                title={detail.title}
-                type={detail.type}
-              >
-                <div className='star-ratings-wrapper'>
-                  {detail.content.map((ratingItem) => {
-                    return (
-                      <StarRating
-                        key={ratingItem.title}
-                        title={ratingItem.title}
-                        rating={ratingItem.score}
-                      />
-                    );
+      <div className='stock-content'>
+        <StockCover
+          stockImageUrl={stockImageUrl}
+          stockCoverImageUrl={coverImageUrl}
+          stockName={stockName}
+        />
+        <InvestSimulatorIdeas className='section' />
+        <Overview className='section' />
+        <Financials className='section' />
+        <div className='content'>
+          <StockChart stockChartUrl={stockChartUrl} />
+          {stock?.detailInfo?.map((detail) => {
+            if (detail.type === 'html') {
+              return (
+                <Analyses
+                  key={detail.title}
+                  title={detail.title}
+                  type={detail.type}
+                >
+                  {detail.content}
+                </Analyses>
+              );
+            }
+            if (detail.type === 'ratingList') {
+              return (
+                <Analyses
+                  key={detail.title}
+                  title={detail.title}
+                  type={detail.type}
+                >
+                  <div className='star-ratings-wrapper'>
+                    {detail.content.map((ratingItem) => {
+                      return (
+                        <StarRating
+                          key={ratingItem.title}
+                          title={ratingItem.title}
+                          rating={ratingItem.score}
+                        />
+                      );
+                    })}
+                  </div>
+                </Analyses>
+              );
+            }
+            if (detail.type === 'management') {
+              return (
+                <Analyses title={detail.title}>
+                  <Management management={detail.content} />
+                </Analyses>
+              );
+            }
+            if (detail.type === 'video') {
+              return (
+                <Analyses title={detail.title}>
+                  <iframe width={880} height={500} src={stock.video_url} />
+                </Analyses>
+              );
+            }
+            if (detail.type === 'investors') {
+              return (
+                <Analyses title={detail.title}>
+                  <div className='investor-wrapper'>
+                    {investors.map((investor) => {
+                      return (
+                        <UserIcon
+                          src={investor.profile_image_url}
+                          key={investor._id}
+                        />
+                      );
+                    })}
+                  </div>
+                </Analyses>
+              );
+            }
+            if (detail.type === 'comments') {
+              return (
+                <Analyses title={detail.title}>
+                  {comments.map((comment) => {
+                    return <Comment key={comment._id} commentJSON={comment} />;
                   })}
-                </div>
-              </Analyses>
-            );
-          }
-          if (detail.type === 'management') {
-            return (
-              <Analyses title={detail.title}>
-                <Management management={detail.content} />
-              </Analyses>
-            );
-          }
-          if (detail.type === 'financials') {
-            return (
-              <Analyses title={detail.title}>
-                {detail.content.map((financialItem) => {
-                  return (
-                    <Financial
-                      className='financial'
-                      key={financialItem.title}
-                      item={financialItem}
-                    />
-                  );
-                })}
-              </Analyses>
-            );
-          }
-          if (detail.type === 'video') {
-            return (
-              <Analyses title={detail.title}>
-                <iframe width={880} height={500} src={stock.video_url} />
-              </Analyses>
-            );
-          }
-          if (detail.type === 'investors') {
-            return (
-              <Analyses title={detail.title}>
-                <div className='investor-wrapper'>
-                  {investors.map((investor) => {
-                    return (
-                      <UserIcon
-                        src={investor.profile_image_url}
-                        key={investor._id}
-                      />
-                    );
-                  })}
-                </div>
-              </Analyses>
-            );
-          }
-          if (detail.type === 'comments') {
-            return (
-              <Analyses title={detail.title}>
-                {comments.map((comment) => {
-                  return <Comment key={comment._id} commentJSON={comment} />;
-                })}
-              </Analyses>
-            );
-          }
-          return '';
-        })}
+                </Analyses>
+              );
+            }
+            return '';
+          })}
 
-        <Analyses title='Comment'>
-          <CommentInput value={comment} setValue={setComment} />
-          <button className='comment-submit-btn' onClick={submitComment}>
-            Submit
-          </button>
-        </Analyses>
-        <div className='buy-sale-btn-group'>
-          <Buy stockJSON={stock} />
-          <Buy isSale stockJSON={stock} />
-        </div>
-        {openInvest && stock && (
-          <div spacing={2} sx={{ width: '100%' }}>
-            <div
-              open={openInvest}
-              autoHideDuration={4000}
-              onClose={handleCloseInvest}
-            >
-              <Alert
+          <Analyses title='Comment'>
+            <CommentInput value={comment} setValue={setComment} />
+            <button className='comment-submit-btn' onClick={submitComment}>
+              Submit
+            </button>
+          </Analyses>
+          <div className='buy-sale-btn-group'>
+            <Buy stockJSON={stock} />
+            <Buy isSale stockJSON={stock} />
+          </div>
+          {openInvest && stock && (
+            <div spacing={2} sx={{ width: '100%' }}>
+              <div
+                open={openInvest}
+                autoHideDuration={4000}
                 onClose={handleCloseInvest}
-                severity='success'
-                sx={{ width: '100%' }}
               >
-                {`You successfully invested in ${stock.name} stock`}
-              </Alert>
+                <Alert
+                  onClose={handleCloseInvest}
+                  severity='success'
+                  sx={{ width: '100%' }}
+                >
+                  {`You successfully invested in ${stock.name} stock`}
+                </Alert>
+              </div>
+              <Alert severity='success'>{`You successfully invested in ${stock.name} stock`}</Alert>
             </div>
-            <Alert severity='success'>{`You successfully invested in ${stock.name} stock`}</Alert>
-          </div>
-        )}
-        {openNotInvest && stock && (
-          <div spacing={2} sx={{ width: '100%' }}>
-            <div
-              open={openNotInvest}
-              autoHideDuration={4000}
-              onClose={handleNotCloseInvest}
-            >
-              <Alert
+          )}
+          {openNotInvest && stock && (
+            <div spacing={2} sx={{ width: '100%' }}>
+              <div
+                open={openNotInvest}
+                autoHideDuration={4000}
                 onClose={handleNotCloseInvest}
-                severity='success'
-                sx={{ width: '100%' }}
               >
-                {`You have not invested in ${stock.name} stock`}
-              </Alert>
+                <Alert
+                  onClose={handleNotCloseInvest}
+                  severity='success'
+                  sx={{ width: '100%' }}
+                >
+                  {`You have not invested in ${stock.name} stock`}
+                </Alert>
+              </div>
+              <Alert severity='success'>{`You have not invested in ${stock.name} stock`}</Alert>
             </div>
-            <Alert severity='success'>{`You have not invested in ${stock.name} stock`}</Alert>
-          </div>
-        )}
+          )}
+        </div>{' '}
       </div>
     </StockWrapper>
   );

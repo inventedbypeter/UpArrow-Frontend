@@ -20,10 +20,6 @@ const PostWrapper = styled.div`
   width: 59rem;
   gap: 2rem;
   cursor: pointer;
-  padding: 2.4rem;
-  :nth-child(-n + 2) {
-    padding-top: 0;
-  }
 
   .textBlock {
     display: flex;
@@ -51,7 +47,7 @@ const Img = styled.img`
   margin: auto;
   display: block;
   width: 12rem;
-  height: 12.8rem;
+  height: 12rem;
   object-fit: cover;
   border-radius: 0.8rem;
 `;
