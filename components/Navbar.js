@@ -134,6 +134,10 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
     investorRef.current?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const goToPrinciples = () => {
+    router.push('/principles');
+  };
+
   const goToAdminPage = () => {
     router.push('/admin');
   };
@@ -156,6 +160,10 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
 
           <div className='investors' onClick={goToInvestors}>
             Investors
+          </div>
+
+          <div className='principles' onClick={goToPrinciples}>
+            Principles
           </div>
         </div>
       </div>

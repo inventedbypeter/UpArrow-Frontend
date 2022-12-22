@@ -1,5 +1,5 @@
 import styled from '@emotion/styled';
-import color from '../styles/color';
+import color from '../../styles/color';
 import { Bar } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -10,7 +10,7 @@ import {
   Tooltip,
   Legend,
 } from 'chart.js';
-import { HeadH3Bold, HeadH6Bold } from '../styles/typography';
+import { HeadH3Bold, HeadH6Bold } from '../../styles/typography';
 
 ChartJS.register(
   CategoryScale,

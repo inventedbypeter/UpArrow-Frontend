@@ -11,3 +11,5 @@ export { default as CommentIcon } from './Comment.svg';
 export { default as TargetIcon } from './Target.svg';
 export { default as GrowthIcon } from './Growth.svg';
 export { default as RiskIcon } from './Risk.svg';
+export { default as ChevronLeftIcon } from './Chevron-left.svg';
+export { default as ChevronRightIcon } from './Chevron-right.svg';
