@@ -123,7 +123,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   };
 
   const goToStocks = () => {
-    stockRef.current?.scrollIntoView({ behavior: 'smooth' });
+    router.push('/stock');
   };
 
   const goToIdeas = () => {
@@ -151,7 +151,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
 
         <div className='buttons'>
           <div className='stocks' onClick={goToStocks}>
-            Analyses
+            Stocks
           </div>
 
           <div className='ideas' onClick={goToIdeas}>

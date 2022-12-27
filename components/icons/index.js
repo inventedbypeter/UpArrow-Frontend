@@ -13,3 +13,4 @@ export { default as GrowthIcon } from './Growth.svg';
 export { default as RiskIcon } from './Risk.svg';
 export { default as ChevronLeftIcon } from './Chevron-left.svg';
 export { default as ChevronRightIcon } from './Chevron-right.svg';
+export { default as ChevronBottomIcon } from './Chevron-bottom.svg';

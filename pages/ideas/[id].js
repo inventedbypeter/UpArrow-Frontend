@@ -180,7 +180,6 @@ export default function Ideas({
   );
   const commentInputRef = useRef();
   const { post, refetch: refetchPost } = usePost(id);
-  console.log('post : ', post);
   const commentIds = post?.commentIds || [];
   const {
     data: voteData,

@@ -37,8 +37,9 @@ const IndexWrapper = styled.div`
     margin-bottom: 2rem;
 
     & > div {
-      &:not(:nth-last-child(-n
-            + ${({ postLength }) => (postLength % 2 ? 1 : 2)})) {
+      &:not(
+          :nth-last-child(-n + ${({ postLength }) => (postLength % 2 ? 1 : 2)})
+        ) {
         border-bottom: 0.1rem solid #d9d9d9;
       }
     }
@@ -50,12 +51,6 @@ const IndexWrapper = styled.div`
     gap: 1rem;
   }
 `;
-// Lead -> 설계  [ ] [  ] [ ] [ ]
-//어junior, 시니어
-
-// AI -> // AI 특이점 (오기 직전의 세대)
-// AI 일을 다한다. -> 사람 일자리 X -> 사람이 일을 안해도 됨.
-// 필수 편안.
 
 function Home({
   sortedStockDataList,
@@ -147,21 +142,25 @@ function Home({
   return (
     <IndexWrapper postLength={postDataList.length}>
       <div className='main-items'>
-        <div className='text' ref={stockRef}>
-          Let's find the next Tesla
+        <div
+          className='text'
+          ref={stockRef}
+          onClick={() => router.push('/stock')}
+        >
+          Stocks
         </div>
         <div className='stockList'>{logoList}</div>
       </div>
       <div className='main-items'>
         <div className='text' ref={ideaRef}>
-          Investment Ideas
+          Ideas
         </div>
         <div className='postList'>{postList}</div>
       </div>
 
       <div className='main-items'>
         <div className='text' ref={investorRef}>
-          Top Investors
+          Investors
         </div>
         <div className='investorList'>{topTenRenderedInvestorList}</div>
       </div>
