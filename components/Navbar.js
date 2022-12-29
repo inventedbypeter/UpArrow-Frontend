@@ -1,12 +1,7 @@
 import { useRouter } from 'next/router';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import styled from '@emotion/styled';
-// import ProfileIcon from "../images/profile.svg";
-import { useUser } from '@auth0/nextjs-auth0';
-import axios from 'axios';
-// import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import ProfileIcon from './ProfileIcon';
-import { useQuery } from '@tanstack/react-query';
 import { UpArrowLogo } from './icons';
 import { HeadH6Bold } from '../styles/typography';
 import { useAppUser } from '../hooks/useAppUser';
@@ -112,6 +107,10 @@ const NavBlock = styled.div`
   } */
 `;
 
+const getFirstCharacterCapitalString = (str) => {
+  return str[0].toUpperCase() + str.slice(1);
+};
+
 const Navbar = ({ stockRef, ideaRef, investorRef }) => {
   const router = useRouter();
   const { user } = useAppUser();
@@ -122,21 +121,7 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
     router.push('/');
   };
 
-  const goToStocks = () => {
-    router.push('/stock');
-  };
-
-  const goToIdeas = () => {
-    ideaRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const goToInvestors = () => {
-    investorRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  const goToPrinciples = () => {
-    router.push('/principles');
-  };
+  const routes = ['stock', 'ideas', 'investors', 'principles'];
 
   const goToAdminPage = () => {
     router.push('/admin');
@@ -150,28 +135,18 @@ const Navbar = ({ stockRef, ideaRef, investorRef }) => {
         </div>
 
         <div className='buttons'>
-          <div className='stocks' onClick={goToStocks}>
-            Stocks
-          </div>
-
-          <div className='ideas' onClick={goToIdeas}>
-            Ideas
-          </div>
-
-          <div className='investors' onClick={goToInvestors}>
-            Investors
-          </div>
-
-          <div className='principles' onClick={goToPrinciples}>
-            Principles
-          </div>
+          {routes.map((route) => (
+            <div key={route} onClick={() => router.push(`/${route}`)}>
+              {getFirstCharacterCapitalString(route)}
+            </div>
+          ))}
         </div>
       </div>
 
       <div>
         {isAdmin ? (
-          <button className='admin-button' onClick={() => goToAdminPage()}>
-            Switch to Admin mode{' '}
+          <button className='admin-button' onClick={goToAdminPage}>
+            Switch to Admin mode
           </button>
         ) : null}
       </div>

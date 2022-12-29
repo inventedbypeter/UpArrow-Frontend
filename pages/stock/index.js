@@ -5,8 +5,10 @@ import { Body14Medium, HeadH1Bold, HeadH5Bold } from '../../styles/typography';
 import color from '../../styles/color';
 import Image from 'next/image';
 import Viewmore from '../../components/common/Viewmore';
+import { css } from '@emotion/react';
+import OrderChip from '../../components/OrderChip';
 
-const StockBlock = styled.div`
+export const commonListCss = css`
   padding-top: 3.2rem;
   header {
     padding: 1.6rem 3.2rem;
@@ -22,22 +24,29 @@ const StockBlock = styled.div`
     margin-bottom: 4rem;
   }
 
-  .order-chip {
-    padding: 0.8rem 1.6rem;
-    background: white;
-    color: black;
-    border-radius: 999rem;
-    border: 0.1rem solid black;
-    cursor: pointer;
-
-    &.selected {
-      background: black;
-      color: white;
-    }
+  .view-more-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 2.4rem;
   }
+  .view-more {
+    width: 24rem;
+  }
+`;
 
+export const commonTableCss = css`
   .table-wrapper {
     padding: 0 3.2rem;
+  }
+
+  .image-container {
+    padding: 1.2rem 0.8rem;
+  }
+
+  .image-wrapper {
+    position: relative;
+    width: 5.6rem;
+    height: 5.6rem;
   }
 
   table {
@@ -53,13 +62,6 @@ const StockBlock = styled.div`
       border-bottom: 0.1rem solid rgba(0 0 0 / 20%);
     }
 
-    .number {
-      width: 13rem;
-      vertical-align: middle;
-      font-weight: 500;
-      font-size: 1.8rem;
-      line-height: 2.2rem;
-    }
     tbody {
       &:before {
         content: '-';
@@ -72,6 +74,10 @@ const StockBlock = styled.div`
       }
     }
   }
+`;
+
+const StockBlock = styled.div`
+  ${commonListCss}
 
   .name-ticker {
     width: 100%;
@@ -79,25 +85,37 @@ const StockBlock = styled.div`
     align-items: center;
     gap: 2.4rem;
     ${HeadH5Bold}
+  }
+  ${commonTableCss};
 
-    .image-container {
-      padding: 1.2rem 0.8rem;
+  table {
+    thead {
+      th {
+        &:not(:first-child) {
+          padding-left: 2.5rem;
+        }
+      }
     }
 
-    .image-wrapper {
-      position: relative;
-      width: 5.6rem;
-      height: 5.6rem;
+    .number {
+      width: 13rem;
+      vertical-align: middle;
+      font-weight: 500;
+      font-size: 1.8rem;
+      line-height: 2.2rem;
     }
-  }
 
-  .view-more-wrapper {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 2.4rem;
-  }
-  .view-more {
-    width: 24rem;
+    tbody {
+      tr {
+        .divider {
+          border-right: 0.1rem solid #d9d9d9;
+          padding-right: 7.5rem;
+        }
+        span {
+          padding-left: 2.5rem;
+        }
+      }
+    }
   }
 `;
 
@@ -112,13 +130,12 @@ function Home({ stocks }) {
       </header>
       <nav className='order-option-wrapper'>
         {orderOptions.map((order) => (
-          <div
-            className={`order-chip ${order === orderOption ? 'selected' : ''}`}
+          <OrderChip
+            selected={order === orderOption}
             onClick={() => setOrderOption(order)}
             key={order}
-          >
-            {order}
-          </div>
+            order={order}
+          />
         ))}
       </nav>
       <div className='table-wrapper'>
@@ -151,12 +168,28 @@ function Home({ stocks }) {
                     </p>
                   </div>
                 </td>
-                <td className='number'>${stock.price.toLocaleString()}</td>
-                <td className='number'>${stock.marketCap.toLocaleString()}T</td>
-                <td className='number'>{stock.buyer.toLocaleString()}</td>
-                <td className='number'>{stock.seller.toLocaleString()}</td>
-                <td className='number'>{stock.ideas.toLocaleString()}</td>
-                <td className='number'>{stock.comments.toLocaleString()}</td>
+                <td className='number'>
+                  <span>${stock.price.toLocaleString()}</span>
+                </td>
+                <td className='number'>
+                  <span className='divider'>
+                    ${stock.marketCap.toLocaleString()}T
+                  </span>
+                </td>
+                <td className='number'>
+                  <span>{stock.buyer.toLocaleString()}</span>
+                </td>
+                <td className='number'>
+                  <span className='divider'>
+                    {stock.seller.toLocaleString()}
+                  </span>
+                </td>
+                <td className='number'>
+                  <span>{stock.ideas.toLocaleString()}</span>
+                </td>
+                <td className='number'>
+                  <span>{stock.comments.toLocaleString()}</span>
+                </td>
               </tr>
             ))}
           </tbody>

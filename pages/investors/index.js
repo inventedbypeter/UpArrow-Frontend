@@ -69,18 +69,44 @@ const IdeasBlock = styled.div`
       line-height: 2.2rem;
     }
   }
+
+  .rounded {
+    border-radius: 999rem;
+    overflow: hidden;
+  }
+
+  .index {
+    padding: 0 2.6rem;
+  }
+
+  .numbers {
+    width: 14rem;
+  }
+
+  .stocks {
+    width: 32rem;
+  }
+
+  .investors {
+    width: 32rem;
+  }
 `;
 
-const orderOptions = ['Popular', 'Trending', 'Latest'];
+const orderOptions = [
+  'Most Profitable',
+  'Most Assests',
+  'Most Ideas',
+  'Newest',
+];
 
-function Ideas({ ideas }) {
+function Investors({ investors }) {
   const router = useRouter();
   const { data: posts } = useQuery(['posts'], api.post.get);
   const [orderOption, setOrderOption] = useState();
   return (
     <IdeasBlock>
       <header>
-        <h1>Ideas</h1>
+        <h1>Investors</h1>
       </header>
       <nav className='order-option-wrapper'>
         {orderOptions.map((order) => (
@@ -95,48 +121,62 @@ function Ideas({ ideas }) {
       <div className='table-wrapper'>
         <table>
           <thead>
-            <th>Idea Title</th>
-            <th>Stocks</th>
-            <th>Comments</th>
-            <th>Votes</th>
+            <th style={{ paddingLeft: '1rem' }}>Ranks</th>
+            <th style={{ paddingLeft: '0.8rem' }}>Investors</th>
+            <th>Top3 Stocks</th>
+            <th>Ideas</th>
+            <th>Total Profits</th>
+            <th>Total Assets</th>
           </thead>
           <tbody>
-            {ideas?.map((idea) => (
+            {investors?.map((investor, index) => (
               <tr>
+                <td className='comments wrapper index'>{index + 1}</td>
                 <td>
-                  <div className='title wrapper'>
+                  <div className='title wrapper investors'>
                     <div className='image-container'>
-                      <div className='image-wrapper'>
+                      <div className='image-wrapper rounded'>
                         <Image
-                          src={idea.logoUrl}
+                          objectFit='cover'
+                          src={investor.avatarUrl}
                           layout='fill'
-                          alt={idea.title}
+                          alt={investor.name}
                         />
                       </div>
                     </div>
                     <div className='title-author'>
-                      <h5>{idea.title}</h5>
-                      <div className='author'>
-                        by {idea.author} ·{' '}
-                        {timeAgo.format(new Date(idea.updatedAt))}
-                      </div>
+                      <h5>{investor.name}</h5>
                     </div>
                   </div>
                 </td>
                 <td>
                   <div className='wrapper'>
-                    <TagGroup tags={idea.stocks.map((name) => ({ name }))} />
+                    <TagGroup
+                      tags={investor.top3Stocks.map(({ name, profit }) => ({
+                        name: `${name} ${profit.toLocaleString('en-US')}%`,
+                        type:
+                          profit > 0
+                            ? 'plus'
+                            : profit === 0
+                            ? 'outline'
+                            : 'minus',
+                      }))}
+                    />
                   </div>
                 </td>
                 <td>
-                  <div className='comments wrapper'>{idea.comments}</div>
+                  <div className='comments wrapper numbers'>
+                    {investor.ideas.toLocaleString('en-US')}
+                  </div>
                 </td>
                 <td>
-                  <div className='idea-vote wrapper'>
-                    <IdeaVote
-                      agreeCount={idea.votes.good}
-                      disagreeCount={idea.votes.bad}
-                    />
+                  <div className='comments wrapper numbers'>
+                    ${investor.totalProfits.toLocaleString('en-US')}
+                  </div>
+                </td>
+                <td>
+                  <div className='comments wrapper numbers'>
+                    ${investor.totalAssets.toLocaleString('en-US')}
                   </div>
                 </td>
               </tr>
@@ -154,53 +194,80 @@ function Ideas({ ideas }) {
 export default function IdeasPage(props) {
   return (
     <MainLayout>
-      <Ideas {...props} />
+      <Investors {...props} />
     </MainLayout>
   );
 }
 
 export function getServerSideProps() {
-  const fixtureIdeas = [
+  const fixtureInvestors = [
     {
-      logoUrl: '/images/apple.png',
-      title: 'Reasons Why Tesla will Become the Most Valuable Company',
-      author: 'Warren Buffett',
-      updatedAt: '2022-12-31',
-      stocks: ['Apple', 'Microsoft', 'Google'],
-      comments: 104,
-      votes: {
-        good: 1402,
-        bad: 302,
-      },
+      avatarUrl: '/images/warren.png',
+      name: 'Warren Buffett',
+      top3Stocks: [
+        {
+          name: 'Apple',
+          profit: 1200,
+        },
+        {
+          name: 'Microsoft',
+          profit: 240,
+        },
+        {
+          name: 'Google',
+          profit: -127,
+        },
+      ],
+      ideas: 112,
+      totalProfits: 130200,
+      totalAssets: 280200,
     },
     {
-      logoUrl: '/images/apple.png',
-      title: 'Reasons Why Tesla will Become the Most Valuable Company',
-      author: 'Warren Buffett',
-      updatedAt: '2022-12-31',
-      stocks: ['Apple', 'Microsoft', 'Google'],
-      comments: 104,
-      votes: {
-        good: 1402,
-        bad: 302,
-      },
+      avatarUrl: '/images/warren.png',
+      name: 'Warren Buffett',
+      top3Stocks: [
+        {
+          name: 'Apple',
+          profit: 1200,
+        },
+        {
+          name: 'Microsoft',
+          profit: 240,
+        },
+        {
+          name: 'Google',
+          profit: -127,
+        },
+      ],
+      ideas: 112,
+      totalProfits: 130200,
+      totalAssets: 280200,
     },
     {
-      logoUrl: '/images/apple.png',
-      title: 'Reasons Why Tesla will Become the Most Valuable Company',
-      author: 'Warren Buffett',
-      updatedAt: '2022-12-31',
-      stocks: ['Apple', 'Microsoft', 'Google'],
-      comments: 104,
-      votes: {
-        good: 1402,
-        bad: 302,
-      },
+      avatarUrl: '/images/warren.png',
+      name: 'Warren Buffett',
+      top3Stocks: [
+        {
+          name: 'Apple',
+          profit: 1200,
+        },
+        {
+          name: 'Microsoft',
+          profit: 240,
+        },
+        {
+          name: 'Google',
+          profit: -127,
+        },
+      ],
+      ideas: 112,
+      totalProfits: 130200,
+      totalAssets: 280200,
     },
   ];
   return {
     props: {
-      ideas: fixtureIdeas,
+      investors: fixtureInvestors,
     },
   };
 }
